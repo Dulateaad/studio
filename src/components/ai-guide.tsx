@@ -39,6 +39,7 @@ export function AiGuide({ persona }: AiGuideProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     setMessages([{ role: "assistant", content: personaIntros[persona] }]);
@@ -52,6 +53,12 @@ export function AiGuide({ persona }: AiGuideProps) {
         }
     }
   }, [messages]);
+
+    useEffect(() => {
+        if (isLoading && videoRef.current) {
+            videoRef.current.play().catch(error => console.error("Video play failed:", error));
+        }
+    }, [isLoading]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +95,19 @@ export function AiGuide({ persona }: AiGuideProps) {
             <div className="flex items-center gap-3">
                 <div className="relative">
                     <Avatar className="h-12 w-12 border-2 border-primary">
-                        <AvatarImage src="https://picsum.photos/seed/avatar/100/100" data-ai-hint="robot woman" />
+                        {isLoading ? (
+                            <video
+                                ref={videoRef}
+                                src="https://storage.googleapis.com/studio-cloud-runner-scratch-space-prod/49195d2c-d975-4c12-a89c-a1d2d852089a/talking_avatar_2.mp4"
+                                className="aspect-square h-full w-full object-cover"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                            />
+                        ) : (
+                            <AvatarImage src="https://images.unsplash.com/photo-1721651435644-67689038fd6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMHdvbWFufGVufDB8fHx8MTc1ODYyMzI0MXww&ixlib=rb-4.1.0&q=80&w=1080" data-ai-hint="robot woman" />
+                        )}
                         <AvatarFallback>BG</AvatarFallback>
                     </Avatar>
                     <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 border-2 border-card ring-2 ring-green-500" />
@@ -124,7 +143,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                     >
                          {message.role === "assistant" && (
                             <Avatar className="h-8 w-8 self-start flex-shrink-0">
-                                <AvatarImage src="https://picsum.photos/seed/avatar/100/100" />
+                                <AvatarImage src="https://images.unsplash.com/photo-1721651435644-67689038fd6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMHdvbWFufGVufDB8fHx8MTc1ODYyMzI0MXww&ixlib=rb-4.1.0&q=80&w=1080" />
                                 <AvatarFallback>BG</AvatarFallback>
                             </Avatar>
                         )}
@@ -167,7 +186,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                 {isLoading && (
                     <div className="flex items-end gap-3 justify-start">
                          <Avatar className="h-8 w-8 self-start flex-shrink-0">
-                            <AvatarImage src="https://picsum.photos/seed/avatar/100/100" />
+                            <AvatarImage src="https://images.unsplash.com/photo-1721651435644-67689038fd6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMHdvbWFufGVufDB8fHx8MTc1ODYyMzI0MXww&ixlib=rb-4.1.0&q=80&w=1080" />
                             <AvatarFallback>BG</AvatarFallback>
                         </Avatar>
                         <div className="bg-muted rounded-lg px-4 py-3 shadow-sm">
