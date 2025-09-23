@@ -62,7 +62,7 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
                               <Input type="text" placeholder="Начальный адрес" ref={originRef} className="w-full md:w-auto flex-grow" />
                           </Autocomplete>
                           <Autocomplete>
-                              <Input type="text" placeholder="Конечный адрес" ref={destinationRef} className="w-full md:w-auto flex-grow" />
+                              <Input type="text" placeholder="Конечный адрес" ref={destinationRef} className="w-full md-w-auto flex-grow" />
                           </Autocomplete>
                       </div>
                        <div className="flex gap-2">
@@ -82,7 +82,7 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
           <Skeleton className="w-full h-full" />
         ) : loadError ? (
           <div className="flex items-center justify-center h-full w-full bg-destructive/10 text-destructive p-4 text-center">
-            <p>Не удалось загрузить карту. Пожалуйста, проверьте ваш ключ API Google Maps и убедитесь, что он действителен.</p>
+            <p>Не удалось загрузить карту. Пожалуйста, убедитесь, что **Directions API** и **Places API** включены для вашего ключа API в Google Cloud Console.</p>
           </div>
         ) : (
           <Map 

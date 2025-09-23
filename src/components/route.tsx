@@ -43,7 +43,7 @@ export function Route({ route, routeCoordinates }: RouteProps) {
                         <Skeleton className="w-full h-full" />
                         ) : loadError ? (
                         <div className="flex items-center justify-center h-full w-full bg-destructive/10 text-destructive p-4 text-center">
-                            <p>Не удалось загрузить карту. Пожалуйста, проверьте ваш ключ API Google Maps и убедитесь, что он действителен.</p>
+                             <p>Не удалось загрузить карту. Пожалуйста, убедитесь, что **Directions API** и **Places API** включены для вашего ключа API в Google Cloud Console.</p>
                         </div>
                         ) : (
                         <Map isLoaded={isLoaded} routeCoordinates={routeCoordinates} />
