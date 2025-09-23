@@ -19,6 +19,7 @@ type Message = {
   role: "user" | "assistant";
   content: string;
   citations?: any[];
+  audio?: string;
 }
 
 const personaIntros = {
@@ -38,9 +39,11 @@ export function AiGuide({ persona }: AiGuideProps) {
   const [input, setInput] = useState("");
   const [language, setLanguage] = useState<"English" | "Russian" | "Kazakh">("English");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     setMessages([{ role: "assistant", content: personaIntros[persona] }]);
@@ -55,11 +58,28 @@ export function AiGuide({ persona }: AiGuideProps) {
     }
   }, [messages]);
 
-    useEffect(() => {
-        if (isLoading && videoRef.current) {
-            videoRef.current.play().catch(error => console.error("Video play failed:", error));
-        }
-    }, [isLoading]);
+  useEffect(() => {
+    if (isSpeaking && videoRef.current) {
+        videoRef.current.play().catch(error => console.error("Video play failed:", error));
+    } else if (!isSpeaking && videoRef.current) {
+        videoRef.current.pause();
+    }
+  }, [isSpeaking]);
+
+  const handleAudioEnded = () => {
+    setIsSpeaking(false);
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.addEventListener('ended', handleAudioEnded);
+      return () => {
+        audio.removeEventListener('ended', handleAudioEnded);
+      };
+    }
+  }, [audioRef]);
+
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,8 +95,22 @@ export function AiGuide({ persona }: AiGuideProps) {
         query: input,
         preferredLanguage: language,
       });
-      const assistantMessage: Message = { role: "assistant", content: result.response, citations: result.citations };
+
+      const assistantMessage: Message = { 
+        role: "assistant", 
+        content: result.response, 
+        citations: result.citations,
+        audio: result.audio
+      };
       setMessages(prev => [...prev, assistantMessage]);
+
+      if (result.audio && audioRef.current) {
+        audioRef.current.src = result.audio;
+        audioRef.current.play().then(() => {
+            setIsSpeaking(true);
+        }).catch(e => console.error("Audio play failed", e));
+      }
+
     } catch (error) {
       console.error("Failed to get avatar response:", error);
       toast({
@@ -84,7 +118,6 @@ export function AiGuide({ persona }: AiGuideProps) {
         title: "Error",
         description: "The AI guide is currently unavailable.",
       })
-      // We don't remove the user message on failure anymore
     } finally {
       setIsLoading(false);
     }
@@ -110,12 +143,11 @@ export function AiGuide({ persona }: AiGuideProps) {
         <div className="relative w-full h-full flex items-center justify-center">
             <div className="relative w-48 h-48 md:w-64 md:h-64">
                  <Avatar className="w-full h-full border-4 border-primary shadow-lg">
-                    {isLoading ? (
+                    {isSpeaking ? (
                         <video
                             ref={videoRef}
                             src="/talking_avatar.mp4"
                             className="aspect-square h-full w-full object-cover"
-                            autoPlay
                             loop
                             muted
                             playsInline
@@ -188,7 +220,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                 </div>
               </div>
             ))}
-            {isLoading && (
+            {isLoading && !isSpeaking && (
               <div className="flex items-end gap-3 justify-start">
                 <Avatar className="h-8 w-8 self-start flex-shrink-0">
                   <AvatarImage src={aiAvatarImage.imageUrl} />
@@ -211,15 +243,16 @@ export function AiGuide({ persona }: AiGuideProps) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about attractions, routes, or events in Astana..."
-              disabled={isLoading}
+              disabled={isLoading || isSpeaking}
               autoComplete="off"
             />
-            <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+            <Button type="submit" size="icon" disabled={isLoading || isSpeaking || !input.trim()}>
               <Send className="h-5 w-5" />
             </Button>
           </form>
         </div>
       </div>
+      <audio ref={audioRef} className="hidden" />
     </div>
   )
 }

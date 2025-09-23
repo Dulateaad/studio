@@ -11,6 +11,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { askAstanaGuideTool } from '../services/ask-astana-guide';
+import { generateTts } from './generate-tts';
 
 const GenerateAvatarResponseInputSchema = z.object({
   query: z.string().describe('The user query to respond to.'),
@@ -21,6 +22,7 @@ export type GenerateAvatarResponseInput = z.infer<typeof GenerateAvatarResponseI
 const GenerateAvatarResponseOutputSchema = z.object({
   response: z.string().describe('The AI avatar\'s response in the user\'s preferred language.'),
   citations: z.array(z.any()).optional().describe('Citations for the response.'),
+  audio: z.string().optional().describe('The base64 encoded audio of the response.'),
 });
 export type GenerateAvatarResponseOutput = z.infer<typeof GenerateAvatarResponseOutputSchema>;
 
@@ -38,7 +40,10 @@ const prompt = ai.definePrompt({
   name: 'generateAvatarResponsePrompt',
   tools: [askAstanaGuideTool],
   input: {schema: GenerateAvatarResponseInputSchema},
-  output: {schema: GenerateAvatarResponseOutputSchema},
+  output: {schema: z.object({
+    response: z.string().describe('The AI avatar\'s response in the user\'s preferred language.'),
+    citations: z.array(z.any()).optional().describe('Citations for the response.'),
+  })},
   prompt: `You are an AI avatar acting as a tour guide for Astana. Your primary goal is to answer user questions about Astana.
 
 Use the 'askAstanaGuideTool' to answer questions about Astana. Your final response should be based *only* on the information returned by the tool.
@@ -62,27 +67,41 @@ const generateAvatarResponseFlow = ai.defineFlow(
       preferredLanguage: languageMap[input.preferredLanguage]
     });
     
+    let textResponse = "";
+    let citations: any[] | undefined = [];
+
     const toolRequest = llmResponse.toolRequests[0];
 
     if (toolRequest && toolRequest.tool === 'askAstanaGuideTool') {
         const toolResponse = await toolRequest.run();
         if (toolResponse) {
-            return {
-                response: toolResponse.answer,
-                citations: toolResponse.citations
-            };
+            textResponse = toolResponse.answer;
+            citations = toolResponse.citations;
         }
     }
     
-    // Fallback if tool is not called or fails
-    const output = llmResponse.output;
-    if (output) {
-      return output;
+    if (!textResponse) {
+        // Fallback if tool is not called or fails
+        const output = llmResponse.output;
+        if (output) {
+          textResponse = output.response;
+        }
     }
 
+    if (!textResponse) {
+        return {
+          response: "I'm sorry, I couldn't find an answer to your question. Please try rephrasing it.",
+          citations: []
+        };
+    }
+
+    // Generate TTS in parallel
+    const ttsResult = await generateTts(textResponse);
+    
     return {
-      response: "I'm sorry, I couldn't find an answer to your question. Please try rephrasing it.",
-      citations: []
+        response: textResponse,
+        citations: citations,
+        audio: ttsResult.media
     };
   }
 );
