@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
 import { LocationWithCoordinates } from "@/app/page";
 import { Map } from "./map"
@@ -14,6 +14,13 @@ interface NearbyProps {
   routeCoordinates: LocationWithCoordinates[];
 }
 
+const astanaBounds = {
+    north: 51.3,
+    south: 51.0,
+    west: 71.2,
+    east: 71.7,
+};
+
 export function Nearby({ routeCoordinates }: NearbyProps) {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
@@ -21,6 +28,10 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
 
   const originRef = useRef<HTMLInputElement>(null);
   const destinationRef = useRef<HTMLInputElement>(null);
+  
+  const [originAutocomplete, setOriginAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const [destinationAutocomplete, setDestinationAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
@@ -44,13 +55,38 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
     setCalculatedRoute(null);
   }
 
+  const onOriginLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    setOriginAutocomplete(autocomplete);
+  }
+
+  const onDestinationLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    setDestinationAutocomplete(autocomplete);
+  }
+
+  useEffect(() => {
+    if (originAutocomplete) {
+        originAutocomplete.setOptions({
+            bounds: astanaBounds,
+            strictBounds: true,
+            componentRestrictions: { country: "KZ" },
+        });
+    }
+    if (destinationAutocomplete) {
+        destinationAutocomplete.setOptions({
+            bounds: astanaBounds,
+            strictBounds: true,
+            componentRestrictions: { country: "KZ" },
+        });
+    }
+  }, [originAutocomplete, destinationAutocomplete]);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-2">
           <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
               Места рядом
           </h2>
-          <p className="text-muted-foreground">Используйте карту для поиска мест и построения маршрутов.</p>
+          <p className="text-muted-foreground">Используйте карту для поиска мест и построения маршрутов в Астане.</p>
       </div>
 
        {isLoaded && (
@@ -58,10 +94,10 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
               <CardContent className="pt-6">
                   <div className="space-y-4">
                       <div className="flex flex-col md:flex-row gap-4">
-                          <Autocomplete>
+                          <Autocomplete onLoad={onOriginLoad}>
                               <Input type="text" placeholder="Начальный адрес" ref={originRef} className="w-full md:w-auto flex-grow" />
                           </Autocomplete>
-                          <Autocomplete>
+                          <Autocomplete onLoad={onDestinationLoad}>
                               <Input type="text" placeholder="Конечный адрес" ref={destinationRef} className="w-full md-w-auto flex-grow" />
                           </Autocomplete>
                       </div>
