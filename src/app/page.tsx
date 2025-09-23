@@ -26,6 +26,7 @@ export interface LocationWithCoordinates {
 export default function Home() {
   const [route, setRoute] = useState<string>("");
   const [routeCoordinates, setRouteCoordinates] = useState<LocationWithCoordinates[]>([]);
+  const [activeTab, setActiveTab] = useState("plan");
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-muted/40">
@@ -50,7 +51,7 @@ export default function Home() {
         </div>
 
 
-        <Tabs defaultValue="plan" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="hidden md:grid w-full grid-cols-4 h-12">
             <TabsTrigger value="plan"><Sparkles className="mr-2 h-4 w-4" />Спланировать</TabsTrigger>
             <TabsTrigger value="route"><RouteIcon className="mr-2 h-4 w-4" />План</TabsTrigger>
@@ -59,7 +60,7 @@ export default function Home() {
           </TabsList>
 
           <TabsContent value="plan" className="mt-6">
-            <Plan setRoute={setRoute} setRouteCoordinates={setRouteCoordinates} />
+            <Plan setRoute={setRoute} setRouteCoordinates={setRouteCoordinates} setActiveTab={setActiveTab} />
           </TabsContent>
           <TabsContent value="route" className="mt-6">
             <Route route={route} routeCoordinates={routeCoordinates} />

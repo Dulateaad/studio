@@ -24,9 +24,10 @@ const formSchema = z.object({
 interface PlanProps {
     setRoute: Dispatch<SetStateAction<string>>;
     setRouteCoordinates: Dispatch<SetStateAction<LocationWithCoordinates[]>>;
+    setActiveTab: Dispatch<SetStateAction<string>>;
 }
 
-export function Plan({ setRoute, setRouteCoordinates }: PlanProps) {
+export function Plan({ setRoute, setRouteCoordinates, setActiveTab }: PlanProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -43,21 +44,27 @@ export function Plan({ setRoute, setRouteCoordinates }: PlanProps) {
     setRoute("");
     setRouteCoordinates([]);
     try {
+      // 1. Get the text-based route recommendation
       const result = await providePersonalizedRecommendation(values);
-      setRoute(result.recommendations);
+      const routeText = result.recommendations;
+      setRoute(routeText);
       
       toast({
         title: "Route Generated!",
-        description: "Your personalized route is now available in the 'План' tab. Getting coordinates for the map...",
+        description: "Your personalized route is ready. Now plotting it on the map.",
       });
 
-      const coordsResult = await getRouteCoordinates({ route: result.recommendations });
+      // 2. Get the coordinates for the route
+      const coordsResult = await getRouteCoordinates({ route: routeText });
       setRouteCoordinates(coordsResult.locations);
 
        toast({
         title: "Map Updated!",
-        description: "The route has been added to the map.",
+        description: "Your route has been plotted. Check the 'План' tab.",
       });
+
+      // 3. Switch to the "Route" tab to show the result
+      setActiveTab("route");
 
     } catch (error) {
       console.error("Failed to get recommendations:", error);
