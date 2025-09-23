@@ -14,12 +14,13 @@ import { askAstanaGuideTool } from '../services/ask-astana-guide';
 
 const GenerateAvatarResponseInputSchema = z.object({
   query: z.string().describe('The user query to respond to.'),
-  preferredLanguage: z.enum(['Kazakh', 'Russian', 'English']).describe('The user\'s preferred language.'),
+  preferredLanguage: z.enum(['English', 'Russian', 'Kazakh']).describe('The user\'s preferred language.'),
 });
 export type GenerateAvatarResponseInput = z.infer<typeof GenerateAvatarResponseInputSchema>;
 
 const GenerateAvatarResponseOutputSchema = z.object({
   response: z.string().describe('The AI avatar\'s response in the user\'s preferred language.'),
+  citations: z.array(z.any()).optional().describe('Citations for the response.'),
 });
 export type GenerateAvatarResponseOutput = z.infer<typeof GenerateAvatarResponseOutputSchema>;
 
@@ -38,14 +39,14 @@ const prompt = ai.definePrompt({
   tools: [askAstanaGuideTool],
   input: {schema: GenerateAvatarResponseInputSchema},
   output: {schema: GenerateAvatarResponseOutputSchema},
-  prompt: `You are an AI avatar interacting with tourists. Respond to the user\'s query in their preferred language.
+  prompt: `You are an AI avatar acting as a tour guide for Astana. Your primary goal is to answer user questions about Astana.
 
-If the user asks a question about Astana, use the askAstanaGuideTool to get information.
+Use the 'askAstanaGuideTool' to answer questions about Astana. Your final response should be based *only* on the information returned by the tool.
 
-Preferred Language: {{{preferredLanguage}}}
+The user's preferred language is {{preferredLanguage}}. You MUST respond in this language. The 'lang' parameter for the tool must be the corresponding two-letter code for this language.
+
 User Query: {{{query}}}
-
-Response:`,
+`,
 });
 
 const generateAvatarResponseFlow = ai.defineFlow(
@@ -55,11 +56,33 @@ const generateAvatarResponseFlow = ai.defineFlow(
     outputSchema: GenerateAvatarResponseOutputSchema,
   },
   async input => {
-    const {output} = await prompt({
+    const llmResponse = await prompt({
       ...input,
       // @ts-ignore
       preferredLanguage: languageMap[input.preferredLanguage]
     });
-    return output!;
+    
+    const toolRequest = llmResponse.toolRequests[0];
+
+    if (toolRequest && toolRequest.tool === 'askAstanaGuideTool') {
+        const toolResponse = await toolRequest.run();
+        if (toolResponse) {
+            return {
+                response: toolResponse.answer,
+                citations: toolResponse.citations
+            };
+        }
+    }
+    
+    // Fallback if tool is not called or fails
+    const output = llmResponse.output;
+    if (output) {
+      return output;
+    }
+
+    return {
+      response: "I'm sorry, I couldn't find an answer to your question. Please try rephrasing it.",
+      citations: []
+    };
   }
 );

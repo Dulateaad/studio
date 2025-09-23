@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Languages, Send } from "lucide-react"
+import { Languages, Send, BookText } from "lucide-react"
 
 import type { Persona } from "./settings"
 import { generateAvatarResponse } from "@/ai/flows/generate-avatar-response"
@@ -12,16 +12,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "./ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 
 type Message = {
   role: "user" | "assistant";
   content: string;
+  citations?: any[];
 }
 
 const personaIntros = {
   formal: "Greetings. I am your digital guide. How may I be of assistance?",
-  friendly: "Hey there! I'm your friendly AI guide. What's on your mind?",
-  humorous: "Alright, let's get this show on the road! Your wish is my command... within reason. What can I do for you?",
+  friendly: "Hey there! I'm your friendly AI guide for Astana. What can I help you with today?",
+  humorous: "Alright, let's get this show on the road! Your wish is my command... as long as it's about Astana. What's the plan?",
 }
 
 interface AiGuideProps {
@@ -65,7 +67,7 @@ export function AiGuide({ persona }: AiGuideProps) {
         query: input,
         preferredLanguage: language,
       });
-      const assistantMessage: Message = { role: "assistant", content: result.response };
+      const assistantMessage: Message = { role: "assistant", content: result.response, citations: result.citations };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Failed to get avatar response:", error);
@@ -74,7 +76,7 @@ export function AiGuide({ persona }: AiGuideProps) {
         title: "Error",
         description: "The AI guide is currently unavailable.",
       })
-      setMessages(prev => prev.filter(m => m !== userMessage));
+      // We don't remove the user message on failure anymore
     } finally {
       setIsLoading(false);
     }
@@ -128,13 +130,37 @@ export function AiGuide({ persona }: AiGuideProps) {
                         )}
                         <div
                             className={cn(
-                                "max-w-md rounded-lg px-4 py-2 shadow-sm",
+                                "max-w-md rounded-lg px-4 py-2 shadow-sm relative group",
                                 message.role === "user"
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-muted"
                             )}
                         >
                             <p className="text-sm">{message.content}</p>
+                            {message.citations && message.citations.length > 0 && (
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="absolute -top-3 -right-3 h-6 w-6 rounded-full bg-secondary text-secondary-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                                            <BookText className="h-4 w-4" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-80">
+                                        <div className="grid gap-4">
+                                            <div className="space-y-2">
+                                                <h4 className="font-medium leading-none">Citations</h4>
+                                                <div className="text-sm text-muted-foreground space-y-2">
+                                                    {message.citations.map((citation, i) => (
+                                                        <div key={i} className="truncate">
+                                                            <a href={citation.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{citation.title}</a>
+                                                            <p>{citation.text}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            )}
                         </div>
                     </div>
                 ))}
@@ -160,7 +186,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                 <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask about attractions, routes, or events..."
+                    placeholder="Ask about attractions, routes, or events in Astana..."
                     disabled={isLoading}
                     autoComplete="off"
                 />
