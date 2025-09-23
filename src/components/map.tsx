@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { GoogleMap, useJsApiLoader, Polyline, Marker } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Polyline, Marker, DirectionsRenderer } from '@react-google-maps/api';
 import { Skeleton } from './ui/skeleton';
 import { LocationWithCoordinates } from '@/app/page';
 import { Button } from './ui/button';
@@ -22,30 +22,63 @@ const center = {
 
 interface MapProps {
     routeCoordinates?: LocationWithCoordinates[];
+    origin?: string;
+    destination?: string;
 }
 
-export function Map({ routeCoordinates }: MapProps) {
+export function Map({ routeCoordinates, origin, destination }: MapProps) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries: ['places'],
   });
   const { toast } = useToast();
 
   const mapRef = useRef<google.maps.Map | null>(null);
   const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral | null>(null);
+  const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
 
   useEffect(() => {
-    if (mapRef.current && routeCoordinates && routeCoordinates.length > 0) {
+    if (mapRef.current && routeCoordinates && routeCoordinates.length > 0 && !directions) {
       const bounds = new google.maps.LatLngBounds();
       routeCoordinates.forEach(loc => {
         bounds.extend(loc.coordinates);
       });
       mapRef.current.fitBounds(bounds);
-    } else if (mapRef.current && userPosition) {
+    } else if (mapRef.current && userPosition && !directions && !routeCoordinates?.length) {
         mapRef.current.panTo(userPosition);
         mapRef.current.setZoom(15);
     }
-  }, [routeCoordinates, userPosition]);
+  }, [routeCoordinates, userPosition, directions]);
+
+  useEffect(() => {
+    if (!origin || !destination || !window.google) {
+        setDirections(null); // Clear directions if origin/destination are cleared
+        return;
+    }
+
+    const directionsService = new window.google.maps.DirectionsService();
+    directionsService.route(
+        {
+            origin: origin,
+            destination: destination,
+            travelMode: window.google.maps.TravelMode.DRIVING,
+        },
+        (result, status) => {
+            if (status === window.google.maps.DirectionsStatus.OK && result) {
+                setDirections(result);
+            } else {
+                console.error(`error fetching directions ${result}`);
+                toast({
+                    variant: "destructive",
+                    title: "Ошибка",
+                    description: "Не удалось построить маршрут. Проверьте адреса.",
+                });
+            }
+        }
+    );
+  }, [origin, destination, toast]);
+
 
   const handleLocateMe = () => {
     if (navigator.geolocation) {
@@ -101,7 +134,9 @@ export function Map({ routeCoordinates }: MapProps) {
             fullscreenControl: false,
         }}
         >
-        {polylinePath && (
+        {directions && <DirectionsRenderer directions={directions} />}
+
+        {!directions && polylinePath && (
             <>
                 <Polyline
                     path={polylinePath}
