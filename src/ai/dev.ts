@@ -1,1 +1,7 @@
-// Flows will be imported for their side effects in this file.
+import { config } from 'dotenv';
+config();
+
+import '@/ai/flows/provide-personalized-recommendation.ts';
+import '@/ai/flows/change-avatar-persona.ts';
+import '@/ai/flows/streets-speak-mode.ts';
+import '@/ai/flows/generate-avatar-response.ts';

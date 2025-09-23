@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "kok-tobe",
+      "description": "View from Kok-Tobe hill",
+      "imageUrl": "https://images.unsplash.com/photo-1706864484546-a87af3cd9ec1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtb3VudGFpbiUyMGNpdHl8ZW58MHx8fHwxNzU4NjIzMjQxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mountain city"
+    },
+    {
+      "id": "ascension-cathedral",
+      "description": "Ascension Cathedral in Panfilov Park",
+      "imageUrl": "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxvcnRob2RveCUyMGNodXJjaHxlbnwwfHx8fDE3NTg2MjMyNDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "orthodox church"
+    },
+    {
+      "id": "shymbulak",
+      "description": "Shymbulak ski resort",
+      "imageUrl": "https://images.unsplash.com/photo-1610479201125-a5c7f17370a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxza2klMjByZXNvcnR8ZW58MHx8fHwxNzU4NjIzMjQxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ski resort"
+    },
+    {
+      "id": "big-almaty-lake",
+      "description": "Big Almaty Lake in the mountains",
+      "imageUrl": "https://images.unsplash.com/photo-1505490096310-204ef067fe6b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMGxha2V8ZW58MHx8fHwxNzU4NTk5MDE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mountain lake"
+    },
+    {
+      "id": "first-president-park",
+      "description": "Fountain at the First President Park",
+      "imageUrl": "https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjaXR5JTIwcGFya3xlbnwwfHx8fDE3NTg2MDU0NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city park"
+    },
+    {
+      "id": "ai-avatar",
+      "description": "AI Guide Avatar",
+      "imageUrl": "https://images.unsplash.com/photo-1721651435644-67689038fd6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMHdvbWFufGVufDB8fHx8MTc1ODYyMzI0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot woman"
+    }
+  ]
 }
