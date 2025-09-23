@@ -13,6 +13,7 @@ import { ScrollArea } from "./ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
+import { aiAvatarImage } from "@/lib/data"
 
 type Message = {
   role: "user" | "assistant";
@@ -118,7 +119,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                             playsInline
                         />
                     ) : (
-                        <AvatarImage src="https://images.unsplash.com/photo-1721651435644-67689038fd6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMHdvbWFufGVufDB8fHx8MTc1ODYyMzI0MXww&ixlib=rb-4.1.0&q=80&w=1080" data-ai-hint="robot woman" />
+                        <AvatarImage src={aiAvatarImage.imageUrl} data-ai-hint={aiAvatarImage.imageHint} />
                     )}
                     <AvatarFallback>BG</AvatarFallback>
                 </Avatar>
@@ -141,7 +142,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                     >
                          {message.role === "assistant" && (
                             <Avatar className="h-8 w-8 self-start flex-shrink-0">
-                                <AvatarImage src="https://images.unsplash.com/photo-1721651435644-67689038fd6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMHdvbWFufGVufDB8fHx8MTc1ODYyMzI0MXww&ixlib=rb-4.1.0&q=80&w=1080" />
+                                <AvatarImage src={aiAvatarImage.imageUrl} />
                                 <AvatarFallback>BG</AvatarFallback>
                             </Avatar>
                         )}
@@ -184,7 +185,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                 {isLoading && (
                     <div className="flex items-end gap-3 justify-start">
                          <Avatar className="h-8 w-8 self-start flex-shrink-0">
-                            <AvatarImage src="https://images.unsplash.com/photo-1721651435644-67689038fd6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMHdvbWFufGVufDB8fHx8MTc1ODYyMzI0MXww&ixlib=rb-4.1.0&q=80&w=1080" />
+                            <AvatarImage src={aiAvatarImage.imageUrl} />
                             <AvatarFallback>BG</AvatarFallback>
                         </Avatar>
                         <div className="bg-muted rounded-lg px-4 py-3 shadow-sm">

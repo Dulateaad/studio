@@ -6,7 +6,7 @@ const getImage = (id: string): ImagePlaceholder => {
   const image = PlaceHolderImages.find(img => img.id === id);
   if (!image) {
     // Return a default placeholder if not found
-    const defaultImage = PlaceHolderImages.find(img => img.id === 'shymbulak');
+    const defaultImage = PlaceHolderImages.find(img => img.id === 'ai-avatar');
     if (defaultImage) return defaultImage;
     
     return {
@@ -103,3 +103,5 @@ export const quests: Quest[] = [
     ],
   },
 ];
+
+export const aiAvatarImage = getImage('ai-avatar');
