@@ -6,6 +6,7 @@ import { z } from "zod"
 import { Sparkles } from "lucide-react"
 
 import { providePersonalizedRecommendation } from "@/ai/flows/provide-personalized-recommendation"
+import { getRouteCoordinates } from "@/ai/flows/get-route-coordinates"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -13,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "./ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Dispatch, SetStateAction, useState } from "react"
+import { LocationWithCoordinates } from "@/app/page"
 
 const formSchema = z.object({
   userPreferences: z.string().min(10, { message: "Please describe your preferences in more detail." }),
@@ -21,9 +23,10 @@ const formSchema = z.object({
 
 interface PlanProps {
     setRoute: Dispatch<SetStateAction<string>>;
+    setRouteCoordinates: Dispatch<SetStateAction<LocationWithCoordinates[]>>;
 }
 
-export function Plan({ setRoute }: PlanProps) {
+export function Plan({ setRoute, setRouteCoordinates }: PlanProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -37,14 +40,25 @@ export function Plan({ setRoute }: PlanProps) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
+    setRoute("");
+    setRouteCoordinates([]);
     try {
       const result = await providePersonalizedRecommendation(values);
       setRoute(result.recommendations);
-      // In a real app with Firestore, we would save the route and then mutate a data key.
+      
       toast({
         title: "Route Generated!",
-        description: "Your personalized route is now available in the 'План' tab.",
-      })
+        description: "Your personalized route is now available in the 'План' tab. Getting coordinates for the map...",
+      });
+
+      const coordsResult = await getRouteCoordinates({ route: result.recommendations });
+      setRouteCoordinates(coordsResult.locations);
+
+       toast({
+        title: "Map Updated!",
+        description: "The route has been added to the map.",
+      });
+
     } catch (error) {
       console.error("Failed to get recommendations:", error);
       toast({

@@ -1,9 +1,14 @@
 "use client"
 
+import { LocationWithCoordinates } from "@/app/page";
 import { Map } from "./map"
 import { Card } from "./ui/card"
 
-export function Nearby() {
+interface NearbyProps {
+  routeCoordinates: LocationWithCoordinates[];
+}
+
+export function Nearby({ routeCoordinates }: NearbyProps) {
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-2">
@@ -14,7 +19,7 @@ export function Nearby() {
       </div>
       
       <Card className="h-96 md:h-[60vh]">
-        <Map />
+        <Map routeCoordinates={routeCoordinates} />
       </Card>
 
       {/* We can add search and routing controls here later */}

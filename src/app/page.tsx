@@ -12,8 +12,20 @@ import { Button } from "@/components/ui/button"
 
 export type Persona = "formal" | "friendly" | "humorous";
 
+export interface Coordinates {
+  lat: number;
+  lng: number;
+}
+
+export interface LocationWithCoordinates {
+  name: string;
+  coordinates: Coordinates;
+}
+
+
 export default function Home() {
   const [route, setRoute] = useState<string>("");
+  const [routeCoordinates, setRouteCoordinates] = useState<LocationWithCoordinates[]>([]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-muted/40">
@@ -47,13 +59,13 @@ export default function Home() {
           </TabsList>
 
           <TabsContent value="plan" className="mt-6">
-            <Plan setRoute={setRoute} />
+            <Plan setRoute={setRoute} setRouteCoordinates={setRouteCoordinates} />
           </TabsContent>
           <TabsContent value="route" className="mt-6">
-            <Route route={route} />
+            <Route route={route} routeCoordinates={routeCoordinates} />
           </TabsContent>
           <TabsContent value="nearby" className="mt-6">
-            <Nearby />
+            <Nearby routeCoordinates={routeCoordinates} />
           </TabsContent>
 
           {/* Mobile Bottom Navigation */}
