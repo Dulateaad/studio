@@ -52,7 +52,7 @@ export const generateTts = ai.defineFlow(
           responseModalities: ['AUDIO'],
           speechConfig: {
             voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'Alloy' }, // A female voice
+              prebuiltVoiceConfig: { voiceName: 'Algenib' }, // A female voice
             },
           },
         },
