@@ -89,12 +89,12 @@ export function AiGuide({ persona }: AiGuideProps) {
                 <div className="relative">
                     <Avatar className="h-12 w-12 border-2 border-primary">
                         <AvatarImage src="https://picsum.photos/seed/avatar/100/100" data-ai-hint="robot woman" />
-                        <AvatarFallback>AG</AvatarFallback>
+                        <AvatarFallback>BG</AvatarFallback>
                     </Avatar>
                     <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 border-2 border-card ring-2 ring-green-500" />
                 </div>
                 <div>
-                    <h2 className="font-bold font-headline text-lg">AlmaGuide AI</h2>
+                    <h2 className="font-bold font-headline text-lg">Baiterek Guide</h2>
                     <p className="text-sm text-muted-foreground capitalize">{persona} Mode</p>
                 </div>
             </div>
@@ -125,7 +125,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                          {message.role === "assistant" && (
                             <Avatar className="h-8 w-8 self-start flex-shrink-0">
                                 <AvatarImage src="https://picsum.photos/seed/avatar/100/100" />
-                                <AvatarFallback>AG</AvatarFallback>
+                                <AvatarFallback>BG</AvatarFallback>
                             </Avatar>
                         )}
                         <div
@@ -168,7 +168,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                     <div className="flex items-end gap-3 justify-start">
                          <Avatar className="h-8 w-8 self-start flex-shrink-0">
                             <AvatarImage src="https://picsum.photos/seed/avatar/100/100" />
-                            <AvatarFallback>AG</AvatarFallback>
+                            <AvatarFallback>BG</AvatarFallback>
                         </Avatar>
                         <div className="bg-muted rounded-lg px-4 py-3 shadow-sm">
                             <div className="flex items-center gap-2">

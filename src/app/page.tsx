@@ -19,10 +19,10 @@ export default function Home() {
       <main className="container mx-auto p-4 md:p-8 flex-grow overflow-y-auto mb-16 md:mb-0">
         <div className="flex flex-col items-center text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold font-headline text-primary">
-            AlmaGuide AI
+            Baiterek Guide
           </h1>
           <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
-            Your personal AI companion for exploring Almaty. Get recommendations, embark on quests, and chat with your guide in multiple languages.
+            Your personal AI companion for exploring Astana. Get recommendations, embark on quests, and chat with your guide in multiple languages.
           </p>
         </div>
 

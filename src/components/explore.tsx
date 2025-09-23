@@ -56,7 +56,7 @@ export function Explore() {
         <div className="flex flex-col gap-2">
             <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
                 <Compass className="w-7 h-7" />
-                Explore Almaty
+                Explore Astana
             </h2>
             <p className="text-muted-foreground">Discover popular attractions and hidden gems around the city.</p>
         </div>

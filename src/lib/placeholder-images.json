@@ -1,34 +1,34 @@
 {
   "placeholderImages": [
     {
-      "id": "kok-tobe",
-      "description": "View from Kok-Tobe hill",
-      "imageUrl": "https://images.unsplash.com/photo-1706864484546-a87af3cd9ec1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtb3VudGFpbiUyMGNpdHl8ZW58MHx8fHwxNzU4NjIzMjQxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "mountain city"
+      "id": "baiterek-tower",
+      "description": "Baiterek Tower in Astana",
+      "imageUrl": "https://images.unsplash.com/photo-1596713601438-23c50a1b3293?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhc3RhbmF8ZW58MHx8fHwxNzU4NjI4MzMzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "Astana tower"
     },
     {
-      "id": "ascension-cathedral",
-      "description": "Ascension Cathedral in Panfilov Park",
-      "imageUrl": "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxvcnRob2RveCUyMGNodXJjaHxlbnwwfHx8fDE3NTg2MjMyNDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "orthodox church"
+      "id": "khan-shatyr",
+      "description": "Khan Shatyr Entertainment Center",
+      "imageUrl": "https://images.unsplash.com/photo-1620023340578-35272338d93c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxhc3RhbmF8ZW58MHx8fHwxNzU4NjI4MzMzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "futuristic tent"
     },
     {
-      "id": "shymbulak",
-      "description": "Shymbulak ski resort",
-      "imageUrl": "https://images.unsplash.com/photo-1610479201125-a5c7f17370a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxza2klMjByZXNvcnR8ZW58MHx8fHwxNzU4NjIzMjQxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "ski resort"
+      "id": "palace-of-peace",
+      "description": "Palace of Peace and Reconciliation",
+      "imageUrl": "https://images.unsplash.com/photo-1633955986849-052449006963?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhc3RhbmF8ZW58MHx8fHwxNzU4NjI4MzMzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pyramid building"
     },
     {
-      "id": "big-almaty-lake",
-      "description": "Big Almaty Lake in the mountains",
-      "imageUrl": "https://images.unsplash.com/photo-1505490096310-204ef067fe6b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtb3VudGFpbiUyMGxha2V8ZW58MHx8fHwxNzU4NTk5MDE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "mountain lake"
+      "id": "nur-astana-mosque",
+      "description": "Nur-Astana Mosque",
+      "imageUrl": "https://images.unsplash.com/photo-1600813442432-1a40a2d593f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhc3RhbmF8ZW58MHx8fHwxNzU4NjI4MzMzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "white mosque"
     },
     {
-      "id": "first-president-park",
-      "description": "Fountain at the First President Park",
-      "imageUrl": "https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjaXR5JTIwcGFya3xlbnwwfHx8fDE3NTg2MDU0NDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "city park"
+      "id": "national-museum",
+      "description": "National Museum of Kazakhstan",
+      "imageUrl": "https://images.unsplash.com/photo-1678848414967-736f33887c33?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtdXNldW0lMjBrYXpha2hzdGFufGVufDB8fHx8MTc1ODYyODYyOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "modern museum"
     },
     {
       "id": "ai-avatar",
