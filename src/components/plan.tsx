@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -13,15 +12,18 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "./ui/input"
 import { useToast } from "@/hooks/use-toast"
-import { Skeleton } from "./ui/skeleton"
+import { Dispatch, SetStateAction, useState } from "react"
 
 const formSchema = z.object({
   userPreferences: z.string().min(10, { message: "Please describe your preferences in more detail." }),
   realTimeData: z.string().min(5, { message: "Please provide some real-time context." }),
 })
 
-export function Recommendations() {
-  const [recommendations, setRecommendations] = useState<string>("");
+interface PlanProps {
+    setRoute: Dispatch<SetStateAction<string>>;
+}
+
+export function Plan({ setRoute }: PlanProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -35,16 +37,20 @@ export function Recommendations() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    setRecommendations("");
     try {
       const result = await providePersonalizedRecommendation(values);
-      setRecommendations(result.recommendations);
+      setRoute(result.recommendations);
+      // In a real app with Firestore, we would save the route and then mutate a data key.
+      toast({
+        title: "Route Generated!",
+        description: "Your personalized route is now available in the 'План' tab.",
+      })
     } catch (error) {
       console.error("Failed to get recommendations:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Could not generate personalized recommendations.",
+        description: "Could not generate a route. Please try again.",
       })
     } finally {
       setIsLoading(false);
@@ -57,9 +63,9 @@ export function Recommendations() {
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <Sparkles className="w-6 h-6 text-primary" />
-                    Personalized Recommendations
+                    Спланировать поездку
                 </CardTitle>
-                <CardDescription>Tell us what you like, and we'll suggest the perfect itinerary for you.</CardDescription>
+                <CardDescription>Расскажите нам о своих предпочтениях, и мы предложим идеальный маршрут.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -69,10 +75,10 @@ export function Recommendations() {
                         name="userPreferences"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Your Preferences</FormLabel>
+                                <FormLabel>Интересы, бюджет, нагрузка</FormLabel>
                                 <FormControl>
                                     <Textarea
-                                        placeholder="e.g., 'I love history, quiet places, and good coffee. I'm not a fan of crowded tourist spots.'"
+                                        placeholder="например, 'Я люблю историю, тихие места и хороший кофе. Я не поклонник людных туристических мест.'"
                                         {...field}
                                         rows={4}
                                     />
@@ -86,10 +92,10 @@ export function Recommendations() {
                         name="realTimeData"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Current Situation</FormLabel>
+                                <FormLabel>Дополнительные параметры</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="e.g., 'It's a sunny afternoon, and I have 3 hours to spare.'"
+                                        placeholder="например, 'Сегодня солнечный день, и у меня есть 3 часа свободного времени.'"
                                         {...field}
                                     />
                                 </FormControl>
@@ -98,40 +104,12 @@ export function Recommendations() {
                         )}
                         />
                         <Button type="submit" disabled={isLoading}>
-                            {isLoading ? "Generating..." : "Get Recommendations"}
+                            {isLoading ? "Генерация..." : "Generate Route"}
                         </Button>
                     </form>
                 </Form>
             </CardContent>
         </Card>
-        
-        {isLoading && (
-            <Card>
-                <CardHeader>
-                    <CardTitle>Your Personalized Plan</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-4 w-5/6" />
-                </CardContent>
-            </Card>
-        )}
-
-        {recommendations && (
-            <Card>
-                <CardHeader>
-                    <CardTitle>Your Personalized Plan</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-2 text-sm text-foreground">
-                        {recommendations.split('\n').filter(p => p.trim() !== "").map((paragraph, index) => (
-                            <p key={index}>{paragraph}</p>
-                        ))}
-                    </div>
-                </CardContent>
-            </Card>
-        )}
     </div>
   )
 }
