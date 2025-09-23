@@ -1,32 +1,22 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Map, Pin, Route as RouteIcon, Sparkles } from "lucide-react"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plan } from "@/components/plan"
 import { Route } from "@/components/route"
 import { Nearby } from "@/components/nearby"
-import { AiGuide } from "@/components/ai-guide"
-import { Settings } from "@/components/settings"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 
 export type Persona = "formal" | "friendly" | "humorous";
 
 export default function Home() {
   const [route, setRoute] = useState<string>("");
-  const [persona, setPersona] = useState<Persona>("friendly");
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-muted/40">
-       <aside className="hidden md:flex md:flex-col md:w-1/3 lg:w-1/4 border-r p-4 gap-4">
-          <Settings persona={persona} setPersona={setPersona} />
-          <div className="flex-grow">
-            <AiGuide persona={persona} />
-          </div>
-        </aside>
-
       <main className="container mx-auto p-4 md:p-8 flex-grow overflow-y-auto mb-16 md:mb-0">
         <div className="flex justify-between items-center mb-8">
             <div className="flex flex-col items-start">
@@ -36,6 +26,14 @@ export default function Home() {
                 <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
                     Your personal AI companion for exploring Astana.
                 </p>
+            </div>
+             <div className="hidden md:block">
+                <Button asChild>
+                    <Link href="/guide">
+                        <Pin className="mr-2 h-4 w-4" />
+                        AI Guide
+                    </Link>
+                </Button>
             </div>
         </div>
 
@@ -59,7 +57,6 @@ export default function Home() {
 
           {/* Mobile Bottom Navigation */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-t-lg z-50">
-             <Sheet>
                 <TabsList className="grid w-full grid-cols-4 h-auto">
                     <TabsTrigger value="plan" className="py-2.5 flex-col h-auto gap-1">
                         <Sparkles className="h-5 w-5" />
@@ -73,22 +70,13 @@ export default function Home() {
                         <Map className="h-5 w-5" />
                         <span className="text-xs">Рядом</span>
                     </TabsTrigger>
-                     <SheetTrigger asChild>
-                        <Button variant="ghost" className="flex-col h-auto gap-1 text-muted-foreground py-2.5">
+                     <Button variant="ghost" className="flex-col h-auto gap-1 text-muted-foreground py-2.5" asChild>
+                        <Link href="/guide">
                             <Pin className="h-5 w-5" />
                             <span className="text-xs">Гид</span>
-                        </Button>
-                    </SheetTrigger>
+                        </Link>
+                    </Button>
                 </TabsList>
-                <SheetContent className="w-[80vw] p-0">
-                    <div className="p-4">
-                        <Settings persona={persona} setPersona={setPersona} />
-                    </div>
-                    <div className="flex-grow p-4 h-[calc(100vh-150px)]">
-                        <AiGuide persona={persona} />
-                    </div>
-                </SheetContent>
-             </Sheet>
           </div>
         </Tabs>
       </main>
