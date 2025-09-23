@@ -10,6 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { askAstanaGuideTool } from '../services/ask-astana-guide';
 
 const GenerateAvatarResponseInputSchema = z.object({
   query: z.string().describe('The user query to respond to.'),
@@ -26,11 +27,20 @@ export async function generateAvatarResponse(input: GenerateAvatarResponseInput)
   return generateAvatarResponseFlow(input);
 }
 
+const languageMap = {
+  English: "en",
+  Russian: "ru",
+  Kazakh: "kk",
+}
+
 const prompt = ai.definePrompt({
   name: 'generateAvatarResponsePrompt',
+  tools: [askAstanaGuideTool],
   input: {schema: GenerateAvatarResponseInputSchema},
   output: {schema: GenerateAvatarResponseOutputSchema},
   prompt: `You are an AI avatar interacting with tourists. Respond to the user\'s query in their preferred language.
+
+If the user asks a question about Astana, use the askAstanaGuideTool to get information.
 
 Preferred Language: {{{preferredLanguage}}}
 User Query: {{{query}}}
@@ -45,7 +55,11 @@ const generateAvatarResponseFlow = ai.defineFlow(
     outputSchema: GenerateAvatarResponseOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const {output} = await prompt({
+      ...input,
+      // @ts-ignore
+      preferredLanguage: languageMap[input.preferredLanguage]
+    });
     return output!;
   }
 );
