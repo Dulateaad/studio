@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { Languages, Send, BookText } from "lucide-react"
 
-import type { Persona } from "./settings"
+import type { Persona } from "@/app/page"
 import { generateAvatarResponse } from "@/ai/flows/generate-avatar-response"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -124,7 +124,7 @@ export function AiGuide({ persona }: AiGuideProps) {
   }
 
   return (
-    <div className="flex flex-col h-[80vh] max-h-[800px] rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
+    <div className="flex flex-col h-full rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
       {/* Avatar Section - Top Half */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 border-b relative bg-muted/20">
         <div className="absolute top-4 right-4 flex items-center gap-2 z-10">

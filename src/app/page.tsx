@@ -20,14 +20,12 @@ export default function Home() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-muted/40">
-       <div className="hidden md:flex md:flex-col md:w-1/3 lg:w-1/4 border-r">
-          <div className="p-4">
-            <Settings persona={persona} setPersona={setPersona} />
-          </div>
-          <div className="flex-grow p-4">
+       <aside className="hidden md:flex md:flex-col md:w-1/3 lg:w-1/4 border-r p-4 gap-4">
+          <Settings persona={persona} setPersona={setPersona} />
+          <div className="flex-grow">
             <AiGuide persona={persona} />
           </div>
-        </div>
+        </aside>
 
       <main className="container mx-auto p-4 md:p-8 flex-grow overflow-y-auto mb-16 md:mb-0">
         <div className="flex justify-between items-center mb-8">
@@ -46,11 +44,11 @@ export default function Home() {
                      <Pin className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent>
+                <SheetContent className="w-[80vw] p-0">
                   <div className="p-4">
                     <Settings persona={persona} setPersona={setPersona} />
                   </div>
-                  <div className="flex-grow p-4">
+                  <div className="flex-grow p-4 h-[calc(100vh-150px)]">
                     <AiGuide persona={persona} />
                   </div>
                 </SheetContent>
