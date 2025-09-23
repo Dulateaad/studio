@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { GoogleMap, useJsApiLoader, Polyline, Marker, DirectionsRenderer } from '@react-google-maps/api';
+import { GoogleMap, Polyline, Marker, DirectionsRenderer } from '@react-google-maps/api';
 import { Skeleton } from './ui/skeleton';
 import { LocationWithCoordinates } from '@/app/page';
 import { Button } from './ui/button';
@@ -21,17 +21,13 @@ const center = {
 };
 
 interface MapProps {
+    isLoaded: boolean;
     routeCoordinates?: LocationWithCoordinates[];
     origin?: string;
     destination?: string;
 }
 
-export function Map({ routeCoordinates, origin, destination }: MapProps) {
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries: ['places'],
-  });
+export function Map({ isLoaded, routeCoordinates, origin, destination }: MapProps) {
   const { toast } = useToast();
 
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -52,7 +48,7 @@ export function Map({ routeCoordinates, origin, destination }: MapProps) {
   }, [routeCoordinates, userPosition, directions]);
 
   useEffect(() => {
-    if (!origin || !destination || !window.google) {
+    if (!origin || !destination || !window.google || !isLoaded) {
         setDirections(null); // Clear directions if origin/destination are cleared
         return;
     }
@@ -77,7 +73,7 @@ export function Map({ routeCoordinates, origin, destination }: MapProps) {
             }
         }
     );
-  }, [origin, destination, toast]);
+  }, [origin, destination, toast, isLoaded]);
 
 
   const handleLocateMe = () => {
@@ -108,12 +104,6 @@ export function Map({ routeCoordinates, origin, destination }: MapProps) {
     }
   };
 
-
-  if (loadError) {
-    return <div className="flex items-center justify-center h-full w-full bg-destructive/10 text-destructive p-4 text-center">
-        <p>Не удалось загрузить карту. Пожалуйста, проверьте ваш ключ API Google Maps и убедитесь, что он действителен.</p>
-    </div>;
-  }
 
   if (!isLoaded) {
     return <Skeleton className="w-full h-full" />;
