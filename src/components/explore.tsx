@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Skeleton } from "./ui/skeleton"
+import { Map } from "./map"
 
 const formSchema = z.object({
   location: z.string().min(3, { message: "Location must be at least 3 characters." }),
@@ -52,14 +53,19 @@ export function Explore() {
 
   return (
     <div className="space-y-8">
+      <div className="flex flex-col gap-2">
+          <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
+              <Compass className="w-7 h-7" />
+              Explore Astana
+          </h2>
+          <p className="text-muted-foreground">Discover popular attractions and hidden gems around the city.</p>
+      </div>
+      
+      <Card className="h-96">
+        <Map />
+      </Card>
+
       <div className="space-y-6">
-        <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-bold font-headline flex items-center gap-2">
-                <Compass className="w-7 h-7" />
-                Explore Astana
-            </h2>
-            <p className="text-muted-foreground">Discover popular attractions and hidden gems around the city.</p>
-        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {attractions.map((attraction) => (
             <Card key={attraction.id} className="overflow-hidden flex flex-col group hover:shadow-lg transition-shadow duration-300">
