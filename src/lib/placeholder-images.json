@@ -33,7 +33,7 @@
     {
       "id": "ai-avatar",
       "description": "AI Guide Avatar",
-      "imageUrl": "https://images.unsplash.com/photo-1721651435644-67689038fd6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMHdvbWFufGVufDB8fHx8MTc1ODYyMzI0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/avatar.png",
       "imageHint": "robot woman"
     }
   ]

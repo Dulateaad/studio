@@ -111,7 +111,7 @@ export function AiGuide({ persona }: AiGuideProps) {
                     {isLoading ? (
                         <video
                             ref={videoRef}
-                            src="https://storage.googleapis.com/studio-cloud-runner-scratch-space-prod/49195d2c-d975-4c12-a89c-a1d2d852089a/talking_avatar_2.mp4"
+                            src="/talking_avatar.mp4"
                             className="aspect-square h-full w-full object-cover"
                             autoPlay
                             loop
