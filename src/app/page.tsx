@@ -37,23 +37,6 @@ export default function Home() {
                     Your personal AI companion for exploring Astana.
                 </p>
             </div>
-            <div className="md:hidden">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="icon">
-                     <Pin className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent className="w-[80vw] p-0">
-                  <div className="p-4">
-                    <Settings persona={persona} setPersona={setPersona} />
-                  </div>
-                  <div className="flex-grow p-4 h-[calc(100vh-150px)]">
-                    <AiGuide persona={persona} />
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
         </div>
 
 
@@ -76,20 +59,36 @@ export default function Home() {
 
           {/* Mobile Bottom Navigation */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-t-lg z-50">
-            <TabsList className="grid w-full grid-cols-3 h-auto">
-              <TabsTrigger value="plan" className="py-2.5 flex-col h-auto gap-1">
-                <Sparkles className="h-5 w-5" />
-                <span className="text-xs">Спланировать</span>
-              </TabsTrigger>
-              <TabsTrigger value="route" className="py-2.5 flex-col h-auto gap-1">
-                <RouteIcon className="h-5 w-5" />
-                <span className="text-xs">План</span>
-              </TabsTrigger>
-              <TabsTrigger value="nearby" className="py-2.5 flex-col h-auto gap-1">
-                <Map className="h-5 w-5" />
-                <span className="text-xs">Рядом</span>
-              </TabsTrigger>
-            </TabsList>
+             <Sheet>
+                <TabsList className="grid w-full grid-cols-4 h-auto">
+                    <TabsTrigger value="plan" className="py-2.5 flex-col h-auto gap-1">
+                        <Sparkles className="h-5 w-5" />
+                        <span className="text-xs">Спланировать</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="route" className="py-2.5 flex-col h-auto gap-1">
+                        <RouteIcon className="h-5 w-5" />
+                        <span className="text-xs">План</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="nearby" className="py-2.5 flex-col h-auto gap-1">
+                        <Map className="h-5 w-5" />
+                        <span className="text-xs">Рядом</span>
+                    </TabsTrigger>
+                     <SheetTrigger asChild>
+                        <Button variant="ghost" className="flex-col h-auto gap-1 text-muted-foreground py-2.5">
+                            <Pin className="h-5 w-5" />
+                            <span className="text-xs">Гид</span>
+                        </Button>
+                    </SheetTrigger>
+                </TabsList>
+                <SheetContent className="w-[80vw] p-0">
+                    <div className="p-4">
+                        <Settings persona={persona} setPersona={setPersona} />
+                    </div>
+                    <div className="flex-grow p-4 h-[calc(100vh-150px)]">
+                        <AiGuide persona={persona} />
+                    </div>
+                </SheetContent>
+             </Sheet>
           </div>
         </Tabs>
       </main>
