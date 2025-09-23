@@ -50,8 +50,8 @@ export function Plan({ setRoute, setRouteCoordinates, setActiveTab }: PlanProps)
       setRoute(routeText);
       
       toast({
-        title: "Route Generated!",
-        description: "Your personalized route is ready. Now plotting it on the map.",
+        title: "Маршрут сгенерирован!",
+        description: "Ваш персональный маршрут готов. Наносим его на карту.",
       });
 
       // 2. Get the coordinates for the route
@@ -59,8 +59,8 @@ export function Plan({ setRoute, setRouteCoordinates, setActiveTab }: PlanProps)
       setRouteCoordinates(coordsResult.locations);
 
        toast({
-        title: "Map Updated!",
-        description: "Your route has been plotted. Check the 'План' tab.",
+        title: "Карта обновлена!",
+        description: "Ваш маршрут был нанесен на карту. Проверьте вкладку 'План'.",
       });
 
       // 3. Switch to the "Route" tab to show the result
@@ -70,8 +70,8 @@ export function Plan({ setRoute, setRouteCoordinates, setActiveTab }: PlanProps)
       console.error("Failed to get recommendations:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Could not generate a route. Please try again.",
+        title: "Ошибка",
+        description: "Не удалось сгенерировать маршрут. Пожалуйста, попробуйте еще раз.",
       })
     } finally {
       setIsLoading(false);
@@ -125,7 +125,7 @@ export function Plan({ setRoute, setRouteCoordinates, setActiveTab }: PlanProps)
                         )}
                         />
                         <Button type="submit" disabled={isLoading}>
-                            {isLoading ? "Генерация..." : "Generate Route"}
+                            {isLoading ? "Генерация..." : "Сгенерировать маршрут"}
                         </Button>
                     </form>
                 </Form>
