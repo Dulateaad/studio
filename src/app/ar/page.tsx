@@ -206,19 +206,15 @@ function ARPageComponent() {
       if (Math.abs(angleDiff) > 90) { // Field of view approximation
          coinStyle = { display: 'none' };
       } else {
-        const scale = Math.max(0.2, 1 - distance / 50); // Scale from 1 down to 0.2
-        
-        // Position horizontally based on angle difference.
-        // The multiplier (e.g., * 2) can be adjusted to control sensitivity.
         const left = 50 + angleDiff * 1.5; 
 
         coinStyle = {
             display: 'block',
             position: 'absolute',
-            top: '80%', // Position it lower on the screen to appear "on the ground"
+            top: '50%',
             left: `${left}%`,
-            transform: `translate(-50%, -50%) scale(${scale})`,
-            transition: 'all 0.5s linear', // Smooth transitions for all properties
+            transform: `translate(-50%, -50%) scale(1)`,
+            transition: 'all 0.5s linear',
         };
       }
   }
@@ -308,5 +304,3 @@ export default function ARPage() {
         </Suspense>
     )
 }
-
-    
