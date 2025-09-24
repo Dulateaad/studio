@@ -88,5 +88,35 @@ body {
 }
 
 @layer utilities {
+  .coin {
+    width: 100px;
+    height: 100px;
+    perspective: 1000px;
+  }
+  .coin-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: spin 3s infinite linear;
+    position: relative;
+    border-radius: 50%;
+    background: gold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: #b8860b;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 0 10px rgba(255, 215, 0, 0.5);
+  }
 
+  @keyframes spin {
+    from {
+      transform: rotateY(0deg);
+    }
+    to {
+      transform: rotateY(360deg);
+    }
+  }
 }
