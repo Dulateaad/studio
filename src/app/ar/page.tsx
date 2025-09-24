@@ -58,7 +58,8 @@ function ARPageComponent() {
     const [target, setTarget] = useState<{lat: number, lng: number} | null>(null);
     
     const completionThreshold = 2; // meters
-    const coinVisibilityThreshold = 3; // meters
+    const coinVisibilityThreshold = 5; // meters
+    const testTargetDistance = 5; // meters
 
     // Request Camera and Geolocation permissions
     useEffect(() => {
@@ -106,9 +107,9 @@ function ARPageComponent() {
                     const { latitude, longitude } = position.coords;
                     setUserPosition({ lat: latitude, lng: longitude });
 
-                    // For testing: create a dynamic target 2 meters north of the user's starting position
+                    // For testing: create a dynamic target north of the user's starting position
                     if (!target) {
-                        const testTarget = calculateNewCoord(latitude, longitude, 2, 0); // 2 meters, 0 degrees (North)
+                        const testTarget = calculateNewCoord(latitude, longitude, testTargetDistance, 0); 
                         setTarget(testTarget);
                     }
                 },
@@ -125,7 +126,7 @@ function ARPageComponent() {
 
             return () => navigator.geolocation.clearWatch(watcher);
         }
-    }, [hasPermission, toast, target]);
+    }, [hasPermission, toast, target, testTargetDistance]);
 
     // Calculate distance and check for completion
     useEffect(() => {
@@ -171,7 +172,7 @@ function ARPageComponent() {
 
                  {/* Center: Coin */}
                 <div className="flex items-center justify-center">
-                    {distance !== null && distance <= coinVisibilityThreshold && (
+                    {distance !== null && distance <= coinVisibilityThreshold && !taskCompleted && (
                         <div className="coin">
                             <div className="coin-inner">
                                 <div className="coin-front">💰</div>
