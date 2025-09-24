@@ -116,6 +116,15 @@ export function Map({ isLoaded, routeCoordinates, origin, destination, nearbyPla
         }
     }
   };
+  
+  const handleMapLoad = (map: google.maps.Map) => {
+    mapRef.current = map;
+    const initialCenter = map.getCenter();
+    if (initialCenter && onCenterChanged) {
+        onCenterChanged({ lat: initialCenter.lat(), lng: initialCenter.lng() });
+    }
+  }
+
 
   if (!isLoaded) {
     return <Skeleton className="w-full h-full" />;
@@ -129,7 +138,7 @@ export function Map({ isLoaded, routeCoordinates, origin, destination, nearbyPla
         mapContainerStyle={containerStyle}
         center={center}
         zoom={13}
-        onLoad={(map) => { mapRef.current = map; }}
+        onLoad={handleMapLoad}
         options={{
             mapTypeControl: false,
             streetViewControl: false,
