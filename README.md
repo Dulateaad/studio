@@ -1,56 +1,23 @@
-# AlmaGuide AI
+# Baiterek Guide
 
-AlmaGuide AI is your personal AI guide for exploring Astana. It's a web application built with Next.js that uses generative AI to provide personalized recommendations, create itineraries, and even conduct augmented reality (AR) quests.
+Baiterek Guide is your personal AI guide for exploring Astana. It's a web application built with Next.js that uses generative AI to provide personalized recommendations, create itineraries, and even conduct augmented reality (AR) quests.
 
-## ✨ Key Features
+## Key Features
 
-This application is packed with features designed to make exploring Astana an interactive and personalized experience.
+-   **AI-Powered Itinerary Planning**: Describe your interests, budget, and available time, and the AI will generate a personalized tour route for you. It suggests attractions and activities tailored to your preferences, complete with real-time data like weather and traffic considerations.
 
-*   **🤖 AI Guide Chat**
-    *   **Conversational Interface:** Chat with an intelligent avatar that can answer your questions about Astana's attractions, history, and culture.
-    *   **Persona Customization:** Tailor the guide's communication style. Choose between a `formal` persona for straightforward, professional answers or a `humorous` one for a more friendly and engaging interaction.
-    *   **Multi-language Support:** Interact with the guide in `English`, `Russian`, or `Kazakh`. The AI will respond in your selected language.
-    *   **Voice Responses (Text-to-Speech):** Hear the guide's responses spoken aloud. The avatar's lips even move in sync with the audio, creating a more immersive experience.
+-   **Interactive AI Guide**: Chat with a friendly AI avatar that acts as your personal tour guide. You can ask questions about Astana's history, culture, and attractions. The guide can respond in English, Russian, or Kazakh and can adopt different personas (formal or humorous) to make the interaction more engaging. The responses are also available as audio.
 
-*   **🗺️ Personalized Itinerary Planning**
-    *   **AI-Powered Recommendations:** On the "Plan" tab, describe your interests (e.g., "I love history and quiet cafes"), budget, and available time. The AI will generate a unique travel route tailored to your preferences.
-    *   **Route Visualization:** The generated itinerary is not just text. The app automatically extracts key locations from the plan and plots them on an interactive map, giving you a clear visual of your trip.
+-   **Interactive Map & Navigation**: The application includes a fully interactive map where you can:
+    *   View your AI-generated routes.
+    *   Build custom routes between two points.
+    *   Search for nearby places like cafes, museums, and parks based on your current location on the map.
 
-*   **📍 Interactive Map & Nearby Search**
-    *   **Route Plotting:** View your custom-generated route on a map in the "Plan" tab.
-    *   **Custom Route Builder:** Use the "Nearby" tab to get directions between any two points in Astana.
-    *   **Point of Interest Search:** Find interesting places near you or at any point on the map. Search for categories like `cafes`, `museums`, or `parks`, and see them marked on the map. Adjust the search radius to widen or narrow your results.
+-   **AR & Recognition Quests**: Complete interactive quests that make exploring the city more fun.
+    *   **Recognition Quests**: Use your phone's camera to photograph landmarks. The app's AI will identify the location to check off the task.
+    *   **AR Quests**: Use an AR compass to find virtual items hidden at specific geographic coordinates.
 
-*   **📸 Augmented Reality (AR) Quests**
-    *   **Interactive Quests:** Participate in scavenger hunt-style quests from the "Quests" tab. Each quest consists of tasks that guide you to specific locations in Astana.
-    *   **AR Object Hunt:** Select a task to launch the AR view. Using your phone's camera and sensors, you'll search for a virtual object (a 2D coin) in the real world. The object is fixed in a specific geographic location, requiring you to physically move and point your camera to find it.
-    *   **Real-time Guidance:** The on-screen display shows the distance to the object and your phone's compass heading to help you navigate.
-
-*   **- QR Code Scanner**
-    *   **Discover Hidden Information:** The "Scan" tab opens a QR code scanner. In a real-world scenario, these codes could be placed at attractions to unlock historical facts, special offers, or the next step in a quest.
-
-## 🚀 Technologies
-
-*   **Framework:** [Next.js](https://nextjs.org/) (App Router)
-*   **Artificial Intelligence:** [Google Genkit](https://firebase.google.com/docs/genkit)
-*   **UI Components:** [ShadCN/UI](https://ui.shadcn.com/)
-*   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-*   **Augmented Reality (AR):** Geolocation API, DeviceOrientation API
-*   **Maps:** Google Maps Platform API (Places, Directions, Maps JavaScript)
-
-## 🤖 How the AI Guide (Genkit) Works
-
-The chat with the AI guide is built on the Google Genkit framework. This allows for the creation of robust and structured AI functions (flows).
-
-The main flow for communicating with the avatar is `generateAvatarResponseFlow`. Here's how it's designed:
-
-1.  **Receiving the Request:** The flow accepts the user's query, selected language (`English`, `Russian`, `Kazakh`), and communication style (`formal`, `humorous`).
-2.  **Using a Tool:** Instead of directly answering the question, the language model uses a special "tool" — `askAstanaGuideTool`. This tool makes a request to your custom API (`ASTANA_GUIDE_API_URL`), passing it the query text, language, and style.
-3.  **Reliable Answers:** This approach (RAG — Retrieval-Augmented Generation) ensures that the model's responses are based **only** on verified data from your API, rather than "inventing" facts.
-4.  **Text-to-Speech (TTS):** After receiving a text response from the API, a second flow, `generateTts`, is triggered. It converts this text into an audio file (speech).
-5.  **Final Result:** The frontend receives a complete object containing the text response, the audio file for playback, and, if necessary, any citations returned by the API.
-
-This architecture makes the AI guide not just a "chatbot," but a reliable source of information with a voice interface.
+-   **QR Code Scanner**: Scan QR codes placed at various points of interest to get more information or unlock parts of a quest.
 
 ## 🛠️ Installation and Startup
 
@@ -71,6 +38,10 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="YOUR_GOOGLE_MAPS_KEY"
 
 # Key for Generative Language API (Google AI Studio)
 GEMINI_API_KEY="YOUR_GEMINI_KEY"
+
+# Keys for the Landmark Recognition API
+RECOGNITION_API_URL="https://x7atk3se2g.execute-api.us-east-1.amazonaws.com/prod/recognize"
+RECOGNITION_API_KEY="baiterek-key"
 
 # Data for the custom guide API (if used)
 ASTANA_GUIDE_API_URL="YOUR_API_URL"
@@ -104,3 +75,4 @@ npm run genkit:watch
 ```
 
 This will allow you to monitor the execution of AI functions in real-time.
+
