@@ -39,7 +39,7 @@ function ARPageComponent() {
     const targetLat = parseFloat(searchParams.get('lat') || '0');
     const targetLng = parseFloat(searchParams.get('lng') || '0');
     const target = { lat: targetLat, lng: targetLng };
-    const completionThreshold = 5; // meters
+    const completionThreshold = 99999; // meters - set to a large number for testing
 
     // Request Camera and Geolocation permissions
     useEffect(() => {
@@ -154,16 +154,14 @@ function ARPageComponent() {
                 </Card>
 
                  {/* Center: Coin */}
-                {distance !== null && distance <= completionThreshold && (
-                    <div className="flex items-center justify-center">
-                        <div className="coin">
-                            <div className="coin-inner">
-                                <div className="coin-front">💰</div>
-                                <div className="coin-back">💰</div>
-                            </div>
+                <div className="flex items-center justify-center">
+                    <div className="coin">
+                        <div className="coin-inner">
+                            <div className="coin-front">💰</div>
+                            <div className="coin-back">💰</div>
                         </div>
                     </div>
-                )}
+                </div>
                 
                 {/* Bottom: Spacer */}
                  <div></div>
