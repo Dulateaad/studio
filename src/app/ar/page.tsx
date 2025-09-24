@@ -25,9 +25,28 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
     return R * c; // in metres
 }
 
+// Function to calculate a new coordinate a certain distance away
+function calculateNewCoord(lat: number, lon: number, distance: number, bearing: number) {
+    const R = 6371e3; // Earth's radius in meters
+    const d = distance; 
+
+    const lat1 = lat * Math.PI/180;
+    const lon1 = lon * Math.PI/180;
+    const brng = bearing * Math.PI/180;
+
+    let lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R) +
+                          Math.cos(lat1)*Math.sin(d/R)*Math.cos(brng) );
+    let lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(d/R)*Math.cos(lat1),
+                                 Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2));
+
+    lat2 = lat2 * 180/Math.PI;
+    lon2 = lon2 * 180/Math.PI;
+
+    return { lat: lat2, lng: lon2 };
+}
+
 function ARPageComponent() {
     const router = useRouter();
-    const searchParams = useSearchParams();
     const { toast } = useToast();
 
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -36,9 +55,8 @@ function ARPageComponent() {
     const [distance, setDistance] = useState<number | null>(null);
     const [taskCompleted, setTaskCompleted] = useState(false);
     
-    const targetLat = parseFloat(searchParams.get('lat') || '0');
-    const targetLng = parseFloat(searchParams.get('lng') || '0');
-    const target = { lat: targetLat, lng: targetLng };
+    const [target, setTarget] = useState<{lat: number, lng: number} | null>(null);
+    
     const completionThreshold = 2; // meters
     const coinVisibilityThreshold = 3; // meters
 
@@ -87,6 +105,12 @@ function ARPageComponent() {
                 (position) => {
                     const { latitude, longitude } = position.coords;
                     setUserPosition({ lat: latitude, lng: longitude });
+
+                    // For testing: create a dynamic target 2 meters north of the user's starting position
+                    if (!target) {
+                        const testTarget = calculateNewCoord(latitude, longitude, 2, 0); // 2 meters, 0 degrees (North)
+                        setTarget(testTarget);
+                    }
                 },
                 (error) => {
                     console.error("Geolocation error:", error);
@@ -101,16 +125,15 @@ function ARPageComponent() {
 
             return () => navigator.geolocation.clearWatch(watcher);
         }
-    }, [hasPermission, toast]);
+    }, [hasPermission, toast, target]);
 
     // Calculate distance and check for completion
     useEffect(() => {
-        if (!taskCompleted) {
-            // For testing: Set distance to 1 meter so the coin is always visible
-            const dist = 1;
+        if (userPosition && target && !taskCompleted) {
+            const dist = getDistance(userPosition.lat, userPosition.lng, target.lat, target.lng);
             setDistance(dist);
 
-            if (dist <= completionThreshold) {
+            if (dist < completionThreshold) {
                 setTaskCompleted(true);
                 toast({
                     title: 'Task Completed!',
