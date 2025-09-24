@@ -113,18 +113,23 @@ function ARPageComponent() {
     if (!isStarted) return;
     
     const handleOrientation = (e: DeviceOrientationEvent) => {
+        // Use webkitCompassHeading for iOS, alpha for others
         const compassHeading = (e as any).webkitCompassHeading;
         let heading = 0;
         if (compassHeading != null) {
             heading = 360 - compassHeading; // iOS compass is reversed
         } else if (e.alpha != null) {
+            // alpha is the compass direction in degrees, 0-360
             heading = e.alpha;
         }
         setDeviceHeading(heading);
     };
 
-    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
-    return () => window.removeEventListener("deviceorientationabsolute", handleOrientation, true);
+    // Use 'deviceorientationabsolute' if available, otherwise 'deviceorientation'
+    const eventName = 'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation';
+    window.addEventListener(eventName, handleOrientation, true);
+    
+    return () => window.removeEventListener(eventName, handleOrientation, true);
   }, [isStarted]);
 
 
@@ -147,7 +152,8 @@ function ARPageComponent() {
                     setTargetLocation({ lat: parseFloat(lat), lng: parseFloat(lng) });
                 } else {
                     // DEMO MODE: Create a target 5 meters in front of the user
-                    const target = addDistanceToPoint(newLocation.lat, newLocation.lng, 5, deviceHeading);
+                    const heading = deviceHeading || 0;
+                    const target = addDistanceToPoint(newLocation.lat, newLocation.lng, 5, heading);
                     setTargetLocation(target);
                 }
             }
@@ -178,10 +184,6 @@ function ARPageComponent() {
                 title: "Quest Item Collected!",
                 description: "You've found the coin!",
             });
-            setTimeout(() => {
-                // In a real app, you'd navigate back or update quest state
-                // For now, we can just show a message
-            }, 2000);
         }
     }
   }, [userLocation, targetLocation, isCollected, toast]);
@@ -193,23 +195,36 @@ function ARPageComponent() {
 
   if (distance !== null && targetLocation && userLocation && distance < 50 && !isCollected) { // Render within 50 meters
       const bearing = calculateBearing(userLocation.lat, userLocation.lng, targetLocation.lat, targetLocation.lng);
-      const angleDiff = (bearing - deviceHeading + 360) % 360;
       
-      const scale = Math.max(0.1, 1 - distance / 50); // Scale from 1 down to 0.1
-      const left = 50 + (angleDiff > 180 ? angleDiff - 360 : angleDiff) * 2; // Position horizontally
+      // Calculate difference between device heading and bearing to target
+      // This angle determines the horizontal position of the coin on the screen
+      let angleDiff = bearing - deviceHeading;
+      if (angleDiff > 180) angleDiff -= 360;
+      if (angleDiff < -180) angleDiff += 360;
 
-      coinStyle = {
-          display: 'block',
-          position: 'absolute',
-          top: '40%',
-          left: `${left}%`,
-          transform: `translate(-50%, -50%) scale(${scale})`,
-          transition: 'transform 0.5s ease-out, left 0.5s linear',
-      };
+      // Make the coin disappear if it's too far off-screen
+      if (Math.abs(angleDiff) > 90) { // Field of view approximation
+         coinStyle = { display: 'none' };
+      } else {
+        const scale = Math.max(0.2, 1 - distance / 50); // Scale from 1 down to 0.2
+        
+        // Position horizontally based on angle difference.
+        // The multiplier (e.g., * 2) can be adjusted to control sensitivity.
+        const left = 50 + angleDiff * 1.5; 
+
+        coinStyle = {
+            display: 'block',
+            position: 'absolute',
+            top: '80%', // Position it lower on the screen to appear "on the ground"
+            left: `${left}%`,
+            transform: `translate(-50%, -50%) scale(${scale})`,
+            transition: 'all 0.5s linear', // Smooth transitions for all properties
+        };
+      }
   }
 
   return (
-    <div className="relative h-screen w-screen bg-black">
+    <div className="relative h-screen w-screen bg-black overflow-hidden">
       <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover" playsInline muted autoPlay />
       
       {!isStarted && (
@@ -238,8 +253,9 @@ function ARPageComponent() {
       {isStarted && (
         <>
             {/* HUD */}
-            <div className="absolute top-4 left-4 z-10 text-white bg-black/50 p-2 rounded-md">
-                <p>Distance: {distance !== null ? `${distance.toFixed(1)}m` : 'Calculating...'}</p>
+            <div className="absolute top-4 left-4 z-10 text-white bg-black/50 p-2 rounded-md font-mono">
+                <p>Distance: {distance !== null ? `${distance.toFixed(1)}m` : '...'}</p>
+                <p>Heading: {deviceHeading.toFixed(0)}°</p>
             </div>
              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
                 <Button asChild variant="secondary" size="icon" className="h-12 w-12 rounded-full">
@@ -251,7 +267,7 @@ function ARPageComponent() {
             </div>
 
             {/* Coin */}
-            {!isCollected && distance !== null && distance < 50 && (
+            {!isCollected && (
                  <div className="coin" style={coinStyle}>
                     <div className="coin-inner">$</div>
                 </div>
