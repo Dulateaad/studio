@@ -59,7 +59,7 @@ function ARPageComponent() {
     
     const completionThreshold = 2; // meters
     const coinVisibilityThreshold = 5; // meters
-    const testTargetDistance = 5; // meters
+    const testTargetDistance = 3; // meters
 
     // Request Camera and Geolocation permissions
     useEffect(() => {
@@ -174,10 +174,13 @@ function ARPageComponent() {
                  {/* Center: Coin */}
                 <div className="flex items-center justify-center">
                     {distance !== null && distance <= coinVisibilityThreshold && !taskCompleted && (
-                        <div className="coin">
-                            <div className="coin-inner">
-                                <div className="coin-front">💰</div>
-                                <div className="coin-back">💰</div>
+                        <div className="coin-wrapper">
+                            <div className="coin">
+                                <div className="coin__face coin__face--front">$</div>
+                                <div className="coin__face coin__face--back"></div>
+                                <div className="coin__side">
+                                    {Array.from({ length: 20 }).map((_, i) => <div key={i} />)}
+                                </div>
                             </div>
                         </div>
                     )}
