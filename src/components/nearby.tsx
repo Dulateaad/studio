@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
 import { LocationWithCoordinates } from "@/app/page";
 import { Map } from "./map"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { X, Loader2, Coffee, Landmark, Trees } from "lucide-react";
@@ -13,6 +13,8 @@ import { findNearbyPlaces } from "@/ai/flows/find-nearby-places";
 import type { Place } from "@/ai/flows/find-nearby-places";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "./ui/scroll-area";
+import { Label } from "./ui/label";
+import { Slider } from "./ui/slider";
 
 interface NearbyProps {
   routeCoordinates: LocationWithCoordinates[];
@@ -40,6 +42,7 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
   const [nearbyPlaces, setNearbyPlaces] = useState<Place[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [radius, setRadius] = useState(3000);
 
   const originRef = useRef<HTMLInputElement>(null);
   const destinationRef = useRef<HTMLInputElement>(null);
@@ -82,12 +85,13 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
             latitude: mapCenter.lat,
             longitude: mapCenter.lng,
             placeType: placeType,
+            radius: radius
         });
         setNearbyPlaces(places);
         if (places.length === 0) {
           toast({
             title: "Ничего не найдено",
-            description: `Поблизости не найдено мест в категории "${placeType}". Попробуйте переместить карту.`,
+            description: `Поблизости не найдено мест в категории "${placeType}". Попробуйте переместить карту или увеличить радиус.`,
           });
         }
     } catch (error) {
@@ -141,10 +145,16 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
                 <div className="space-y-4">
                     {isLoaded ? (
                         <>
-                        <Autocomplete onLoad={onOriginLoad}>
+                        <Autocomplete onLoad={onOriginLoad} options={{
+                            bounds: astanaBounds,
+                            strictBounds: true,
+                        }}>
                             <Input type="text" placeholder="Начальный адрес" ref={originRef} className="w-full" />
                         </Autocomplete>
-                        <Autocomplete onLoad={onDestinationLoad}>
+                        <Autocomplete onLoad={onDestinationLoad} options={{
+                            bounds: astanaBounds,
+                            strictBounds: true,
+                        }}>
                             <Input type="text" placeholder="Конечный адрес" ref={destinationRef} className="w-full" />
                         </Autocomplete>
                         </>
@@ -161,10 +171,22 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
          <Card>
             <CardHeader>
                 <CardTitle>Искать рядом</CardTitle>
+                 <CardDescription>Выберите радиус и категорию для поиска мест в текущей области карты.</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground">Нажмите на категорию для поиска мест в текущей области карты.</p>
+                    <div className="space-y-2">
+                        <Label htmlFor="radius">Радиус поиска: {radius / 1000} км</Label>
+                        <Slider 
+                            id="radius"
+                            min={1000}
+                            max={5000}
+                            step={1000}
+                            value={[radius]}
+                            onValueChange={(value) => setRadius(value[0])}
+                            disabled={isSearching}
+                        />
+                    </div>
                      <div className="grid grid-cols-3 gap-2">
                         {placeCategories.map(cat => (
                             <Button

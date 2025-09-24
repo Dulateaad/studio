@@ -15,7 +15,7 @@ const FindNearbyPlacesInputSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
   placeType: z.string().describe('The type of place to search for (e.g., cafe, museum, park).'),
-  radius: z.number().default(5000).describe('The search radius in meters.'),
+  radius: z.number().default(3000).describe('The search radius in meters.'),
 });
 
 export type FindNearbyPlacesInput = z.infer<typeof FindNearbyPlacesInputSchema>;
