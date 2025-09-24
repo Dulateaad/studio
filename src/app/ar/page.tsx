@@ -105,8 +105,9 @@ function ARPageComponent() {
 
     // Calculate distance and check for completion
     useEffect(() => {
-        if (userPosition && target.lat && target.lng && !taskCompleted) {
-            const dist = getDistance(userPosition.lat, userPosition.lng, target.lat, target.lng);
+        if (!taskCompleted) {
+            // For testing: Set distance to 1 meter so the coin is always visible
+            const dist = 1;
             setDistance(dist);
 
             if (dist <= completionThreshold) {
