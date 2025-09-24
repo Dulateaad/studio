@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getQuests, Quest } from "@/ai/flows/get-quests";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 export default function QuestPage() {
     const [quests, setQuests] = useState<Quest[]>([]);
@@ -46,7 +47,7 @@ export default function QuestPage() {
                                 <Camera className="w-6 h-6 text-primary" />
                                 Start a Quest
                             </CardTitle>
-                            <CardDescription>Scan a QR code at a location to begin an AR quest.</CardDescription>
+                            <CardDescription>Select a task from the available quests below to begin an AR experience or scan a QR code at a location.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Button asChild className="w-full">
@@ -72,9 +73,21 @@ export default function QuestPage() {
                                         <p className="mb-4 text-muted-foreground">{quest.description}</p>
                                         <ul className="space-y-2">
                                             {quest.tasks.map((task) => (
-                                                <li key={task.id} className="flex items-center gap-2 text-sm">
-                                                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                                                    <span>{task.text}</span>
+                                                <li key={task.id}>
+                                                    <Button 
+                                                        variant="ghost"
+                                                        asChild
+                                                        className={cn(
+                                                            "w-full justify-start gap-2 text-sm",
+                                                            !task.coordinates && "pointer-events-none text-muted-foreground"
+                                                        )}
+                                                        disabled={!task.coordinates}
+                                                    >
+                                                         <Link href={task.coordinates ? `/ar?lat=${task.coordinates.lat}&lng=${task.coordinates.lng}` : '#'}>
+                                                            <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                                                            <span>{task.text}</span>
+                                                        </Link>
+                                                    </Button>
                                                 </li>
                                             ))}
                                         </ul>

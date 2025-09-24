@@ -62,6 +62,7 @@ export const attractions: Attraction[] = [
 export interface QuestTask {
   id: string;
   text: string;
+  coordinates?: { lat: number; lng: number };
 }
 
 export interface Quest {
@@ -77,7 +78,7 @@ export const quests: Quest[] = [
     title: 'The Capital\'s Heart',
     description: 'Explore the area around Baiterek Tower and discover the symbols of modern Astana.',
     tasks: [
-      { id: 't1', text: 'Take an elevator to the top of Baiterek Tower.' },
+      { id: 't1', text: 'Take an elevator to the top of Baiterek Tower.', coordinates: { lat: 51.1283, lng: 71.4305 } },
       { id: 't2', text: 'Find the "Akorda" Presidential Palace and take a picture.' },
       { id: 't3', text: 'Walk across the Water-Green Boulevard.' },
     ],
