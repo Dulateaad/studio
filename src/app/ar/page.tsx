@@ -45,7 +45,7 @@ function ARPageComponent() {
         videoEl.setAttribute("muted", "");
         videoEl.setAttribute("playsinline", "");
         videoEl.srcObject = stream;
-        videoEl.play();
+        await videoEl.play();
         videoRef.current = videoEl;
 
         setIsStarted(true);
@@ -95,7 +95,7 @@ function ARPageComponent() {
     const handleOrientation = (e: DeviceOrientationEvent) => {
         const compassHeading = (e as any).webkitCompassHeading;
         if (compassHeading != null) {
-            heading = 360 - compassHeading;
+            heading = 360 - compassHeading; // Компенсация для iOS
         } else if (e.alpha != null) {
             heading = e.alpha;
         }
@@ -137,11 +137,13 @@ function ARPageComponent() {
             (video.srcObject as MediaStream).getTracks().forEach(track => track.stop());
         }
         
-        renderer.dispose();
-        if (currentContainer && renderer.domElement) {
-             if (currentContainer.contains(renderer.domElement)) {
-                currentContainer.removeChild(renderer.domElement);
-            }
+        if(rendererRef.current) {
+          rendererRef.current.dispose();
+          if (currentContainer && rendererRef.current.domElement) {
+               if (currentContainer.contains(rendererRef.current.domElement)) {
+                  currentContainer.removeChild(rendererRef.current.domElement);
+              }
+          }
         }
     };
   }, [isStarted]);
