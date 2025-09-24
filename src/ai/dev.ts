@@ -9,3 +9,4 @@ import '@/ai/services/ask-astana-guide.ts';
 import '@/ai/flows/generate-tts.ts';
 import '@/ai/flows/get-quests.ts';
 import '@/ai/flows/get-route-coordinates.ts';
+import '@/ai/flows/find-nearby-places.ts';

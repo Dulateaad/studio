@@ -7,6 +7,7 @@ import { LocationWithCoordinates } from '@/app/page';
 import { Button } from './ui/button';
 import { Locate } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import type { Place } from '@/ai/flows/find-nearby-places';
 
 const containerStyle = {
   width: '100%',
@@ -25,9 +26,11 @@ interface MapProps {
     routeCoordinates?: LocationWithCoordinates[];
     origin?: string;
     destination?: string;
+    nearbyPlaces?: Place[];
+    onCenterChanged?: (center: { lat: number; lng: number }) => void;
 }
 
-export function Map({ isLoaded, routeCoordinates, origin, destination }: MapProps) {
+export function Map({ isLoaded, routeCoordinates, origin, destination, nearbyPlaces, onCenterChanged }: MapProps) {
   const { toast } = useToast();
 
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -87,6 +90,7 @@ export function Map({ isLoaded, routeCoordinates, origin, destination }: MapProp
         if (mapRef.current) {
             mapRef.current.panTo(pos);
             mapRef.current.setZoom(15);
+            onCenterChanged?.(pos);
         }
       }, () => {
         toast({
@@ -111,6 +115,15 @@ export function Map({ isLoaded, routeCoordinates, origin, destination }: MapProp
 
   const polylinePath = routeCoordinates?.map(loc => loc.coordinates);
 
+  const handleDragEnd = () => {
+    if (mapRef.current) {
+        const newCenter = mapRef.current.getCenter();
+        if (newCenter) {
+            onCenterChanged?.({ lat: newCenter.lat(), lng: newCenter.lng() });
+        }
+    }
+  };
+
   return (
     <div className="w-full h-full relative">
         <GoogleMap
@@ -123,10 +136,12 @@ export function Map({ isLoaded, routeCoordinates, origin, destination }: MapProp
             streetViewControl: false,
             fullscreenControl: false,
         }}
+        onDragEnd={handleDragEnd}
+        onZoomChanged={handleDragEnd} // Also update on zoom
         >
         {directions && <DirectionsRenderer directions={directions} />}
 
-        {!directions && polylinePath && (
+        {!directions && polylinePath && polylinePath.length > 0 && (
             <>
                 <Polyline
                     path={polylinePath}
@@ -138,7 +153,7 @@ export function Map({ isLoaded, routeCoordinates, origin, destination }: MapProp
                 />
                 {routeCoordinates?.map((loc, index) => (
                     <Marker 
-                        key={index}
+                        key={`route-${index}`}
                         position={loc.coordinates}
                         label={`${index + 1}`}
                         title={loc.name}
@@ -147,6 +162,15 @@ export function Map({ isLoaded, routeCoordinates, origin, destination }: MapProp
             </>
         )}
         {userPosition && <Marker position={userPosition} title="Your Location" />}
+
+        {nearbyPlaces && nearbyPlaces.map((place, index) => (
+            <Marker
+                key={`nearby-${index}`}
+                position={place.location}
+                title={place.name}
+            />
+        ))}
+
         </GoogleMap>
         <Button 
             size="icon"
