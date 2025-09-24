@@ -39,7 +39,7 @@ function ARPageComponent() {
     const targetLat = parseFloat(searchParams.get('lat') || '0');
     const targetLng = parseFloat(searchParams.get('lng') || '0');
     const target = { lat: targetLat, lng: targetLng };
-    const completionThreshold = 99999; // meters - set to a large number for testing
+    const completionThreshold = 5; // meters
 
     // Request Camera and Geolocation permissions
     useEffect(() => {
@@ -117,7 +117,7 @@ function ARPageComponent() {
                 setTimeout(() => router.push('/quest'), 3000);
             }
         }
-    }, [userPosition, target, router, toast, taskCompleted]);
+    }, [userPosition, target, router, toast, taskCompleted, completionThreshold]);
 
 
     return (
@@ -127,15 +127,6 @@ function ARPageComponent() {
             
             {/* Overlay */}
             <div className="absolute inset-0 bg-black/20" />
-
-            <header className="absolute top-0 left-0 z-30 flex h-14 w-full items-center gap-4 px-4">
-                <Button asChild variant="secondary" size="icon" className="h-8 w-8 rounded-full">
-                    <Link href="/quest">
-                        <ArrowLeft className="h-4 w-4" />
-                        <span className="sr-only">Back to Quests</span>
-                    </Link>
-                </Button>
-            </header>
 
             <main className="relative z-10 flex-1 flex flex-col items-center justify-between p-8">
                 {/* Top: Distance Indicator */}
@@ -155,6 +146,7 @@ function ARPageComponent() {
 
                  {/* Center: Coin */}
                 <div className="flex items-center justify-center">
+                    {/* Always show coin for testing */}
                     <div className="coin">
                         <div className="coin-inner">
                             <div className="coin-front">💰</div>
@@ -167,6 +159,15 @@ function ARPageComponent() {
                  <div></div>
 
             </main>
+
+            <footer className="absolute bottom-0 left-0 z-30 flex h-20 w-full items-center justify-center gap-4 px-4">
+                <Button asChild variant="secondary" size="icon" className="h-12 w-12 rounded-full">
+                    <Link href="/quest">
+                        <ArrowLeft className="h-6 w-6" />
+                        <span className="sr-only">Back to Quests</span>
+                    </Link>
+                </Button>
+            </footer>
 
             {hasPermission === false && (
                 <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 p-8 text-center">
