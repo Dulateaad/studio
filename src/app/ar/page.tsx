@@ -127,7 +127,7 @@ function ARPageComponent() {
 
             return () => navigator.geolocation.clearWatch(watcher);
         }
-    }, [hasPermission, toast, target, testTargetDistance]);
+    }, [hasPermission, toast, target]);
 
     // Calculate distance and check for completion
     useEffect(() => {
@@ -144,7 +144,7 @@ function ARPageComponent() {
                 setTimeout(() => router.push('/quest'), 3000);
             }
         }
-    }, [userPosition, target, router, toast, taskCompleted, completionThreshold]);
+    }, [userPosition, target, router, toast, taskCompleted]);
 
 
     return (
@@ -174,15 +174,7 @@ function ARPageComponent() {
                  {/* Center: Coin */}
                 <div className="flex items-center justify-center">
                     {distance !== null && distance <= coinVisibilityThreshold && !taskCompleted && (
-                        <div className="coin-wrapper">
-                            <div className="coin">
-                                <div className="coin__face coin__face--front">$</div>
-                                <div className="coin__face coin__face--back"></div>
-                                <div className="coin__side">
-                                    {Array.from({ length: 20 }).map((_, i) => <div key={i} />)}
-                                </div>
-                            </div>
-                        </div>
+                         <div className="coin-2d"></div>
                     )}
                 </div>
                 
