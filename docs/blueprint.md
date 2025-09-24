@@ -1,4 +1,4 @@
-# **App Name**: AlmaGuide AI
+# **App Name**: BaiterekGuide AI
 
 ## Core Features:
 
