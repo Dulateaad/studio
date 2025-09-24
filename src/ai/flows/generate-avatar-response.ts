@@ -16,6 +16,7 @@ import { generateTts } from './generate-tts';
 const GenerateAvatarResponseInputSchema = z.object({
   query: z.string().describe('The user query to respond to.'),
   preferredLanguage: z.enum(['English', 'Russian', 'Kazakh']).describe('The user\'s preferred language.'),
+  persona: z.enum(['formal', 'humorous']).describe('The persona for the response.')
 });
 export type GenerateAvatarResponseInput = z.infer<typeof GenerateAvatarResponseInputSchema>;
 
@@ -39,7 +40,11 @@ const languageMap = {
 const prompt = ai.definePrompt({
   name: 'generateAvatarResponsePrompt',
   tools: [askAstanaGuideTool],
-  input: {schema: GenerateAvatarResponseInputSchema},
+  input: {schema: z.object({
+    query: z.string(),
+    preferredLanguage: z.string(),
+    persona: z.string(),
+  })},
   output: {schema: z.object({
     response: z.string().describe('The AI avatar\'s response in the user\'s preferred language.'),
     citations: z.array(z.any()).optional().describe('Citations for the response.'),
@@ -49,6 +54,7 @@ const prompt = ai.definePrompt({
 Use the 'askAstanaGuideTool' to answer questions about Astana. Your final response should be based *only* on the information returned by the tool.
 
 The user's preferred language is {{preferredLanguage}}. You MUST respond in this language. The 'lang' parameter for the tool must be the corresponding two-letter code for this language.
+The user's chosen persona is {{persona}}. You MUST use this persona for the tool.
 
 User Query: {{{query}}}
 `,
@@ -62,7 +68,8 @@ const generateAvatarResponseFlow = ai.defineFlow(
   },
   async input => {
     const llmResponse = await prompt({
-      ...input,
+      query: input.query,
+      persona: input.persona,
       // @ts-ignore
       preferredLanguage: languageMap[input.preferredLanguage]
     });

@@ -13,14 +13,14 @@ import {z} from 'genkit';
 
 const ChangeAvatarPersonaInputSchema = z.object({
   persona: z
-    .enum(['formal', 'friendly', 'humorous'])
+    .enum(['formal', 'humorous'])
     .describe('The desired communication style for the AI avatar.'),
 });
 export type ChangeAvatarPersonaInput = z.infer<typeof ChangeAvatarPersonaInputSchema>;
 
 const ChangeAvatarPersonaOutputSchema = z.object({
   updatedPersona: z
-    .enum(['formal', 'friendly', 'humorous'])
+    .enum(['formal', 'humorous'])
     .describe('The communication style that has been applied to the avatar.'),
   message: z.string().describe('A confirmation message indicating the persona change.'),
 });

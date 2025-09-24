@@ -94,6 +94,7 @@ export function AiGuide({ persona }: AiGuideProps) {
       const result = await generateAvatarResponse({
         query: input,
         preferredLanguage: language,
+        persona: persona === "friendly" ? "humorous" : persona,
       });
 
       const assistantMessage: Message = { 
@@ -162,7 +163,7 @@ export function AiGuide({ persona }: AiGuideProps) {
         </div>
         <div className="mt-2 text-center">
           <h2 className="font-bold font-headline text-xl">Baiterek Guide</h2>
-          <p className="text-sm text-muted-foreground capitalize">{persona} Mode</p>
+          <p className="text-sm text-muted-foreground capitalize">{persona === 'humorous' ? 'Дружелюбный' : 'Formal'} Mode</p>
         </div>
       </div>
 

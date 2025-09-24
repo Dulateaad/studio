@@ -6,6 +6,7 @@ import { z } from "genkit";
 const AstanaGuideInputSchema = z.object({
   text: z.string().describe("The question to ask the Astana guide."),
   lang: z.enum(["ru", "kk", "en"]).describe("The language of the question."),
+  persona: z.enum(["formal", "humorous"]).describe("The persona for the response."),
 });
 
 const AstanaGuideOutputSchema = z.object({
@@ -36,15 +37,14 @@ export const askAstanaGuideTool = ai.defineTool(
           "Content-Type": "application/json",
           "x-api-key": apiKey,
         },
-        body: JSON.stringify({ text: input.text, lang: input.lang }),
+        body: JSON.stringify({ text: input.text, lang: input.lang, persona: input.persona }),
       });
 
       if (!resp.ok) {
         console.error(`API error: ${resp.status} ${resp.statusText}`);
-        // Return a structured error that the LLM can process.
         return {
             lang: input.lang,
-            answer: "An error occurred while contacting the Astana guide service. Please try again later.",
+            answer: "Произошла ошибка, попробуйте позже.",
             citations: []
         };
       }
@@ -53,10 +53,9 @@ export const askAstanaGuideTool = ai.defineTool(
       return data;
     } catch (error) {
       console.error("Failed to fetch from Astana Guide API:", error);
-      // Return a structured error that the LLM can process.
       return {
           lang: input.lang,
-          answer: "There was a problem connecting to the Astana guide service. Please check the connection and try again.",
+          answer: "Произошла ошибка, попробуйте позже.",
           citations: []
       };
     }

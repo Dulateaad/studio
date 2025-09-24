@@ -1,7 +1,7 @@
 "use client"
 
 import { Dispatch, SetStateAction } from "react"
-import { Smile, Briefcase, Drama } from "lucide-react"
+import { Briefcase, Drama } from "lucide-react"
 
 import { changeAvatarPersona } from "@/ai/flows/change-avatar-persona"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -19,9 +19,18 @@ export function Settings({ persona, setPersona }: SettingsProps) {
   const { toast } = useToast();
 
   const handlePersonaChange = async (newPersona: Persona) => {
+    // The API only supports 'formal' and 'humorous'. 'friendly' in the UI maps to 'humorous'
+    const apiPersona = newPersona === "friendly" ? "humorous" : newPersona;
+
+    if (apiPersona !== "formal" && apiPersona !== "humorous") {
+      setPersona(newPersona);
+      return;
+    }
+
     setPersona(newPersona);
+
     try {
-      const result = await changeAvatarPersona({ persona: newPersona });
+      const result = await changeAvatarPersona({ persona: apiPersona as "formal" | "humorous" });
       toast({
         title: "Persona Updated",
         description: result.message,
@@ -50,18 +59,8 @@ export function Settings({ persona, setPersona }: SettingsProps) {
         <RadioGroup
           value={persona}
           onValueChange={(value: Persona) => handlePersonaChange(value)}
-          className="grid grid-cols-3 gap-4"
+          className="grid grid-cols-2 gap-4"
         >
-          <div>
-            <RadioGroupItem value="friendly" id="friendly" className="peer sr-only" />
-            <Label
-              htmlFor="friendly"
-              className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-            >
-              <Smile className="mb-3 h-6 w-6" />
-              Friendly
-            </Label>
-          </div>
           <div>
             <RadioGroupItem value="formal" id="formal" className="peer sr-only" />
             <Label
@@ -83,7 +82,7 @@ export function Settings({ persona, setPersona }: SettingsProps) {
               className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
             >
               <Drama className="mb-3 h-6 w-6" />
-              Humorous
+              Дружелюбный
             </Label>
           </div>
         </RadioGroup>

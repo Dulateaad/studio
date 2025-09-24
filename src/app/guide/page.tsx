@@ -10,7 +10,7 @@ import { Settings } from "@/components/settings"
 import { Button } from "@/components/ui/button"
 
 export default function GuidePage() {
-  const [persona, setPersona] = useState<Persona>("friendly");
+  const [persona, setPersona] = useState<Persona>("humorous");
 
   return (
     <div className="flex flex-col h-screen bg-background">

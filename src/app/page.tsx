@@ -34,7 +34,7 @@ export default function Home() {
         <div className="flex justify-between items-center mb-8">
             <div className="flex flex-col items-start">
                 <h1 className="text-4xl md:text-5xl font-bold font-headline text-primary">
-                    Baiterek Guide
+                    AlmaGuide AI
                 </h1>
                 <p className="mt-2 text-lg text-muted-foreground max-w-2xl">
                     Your personal AI companion for exploring Astana.
