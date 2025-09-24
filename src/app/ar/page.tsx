@@ -1,212 +1,169 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect, useRef, Suspense } from "react";
 import Link from 'next/link';
-import { ArrowLeft, VideoOff, Compass } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent } from '@/components/ui/card';
-
-// Haversine formula to calculate distance between two lat/lng points
-function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const R = 6371e3; // metres
-    const φ1 = lat1 * Math.PI/180; // φ, λ in radians
-    const φ2 = lat2 * Math.PI/180;
-    const Δφ = (lat2-lat1) * Math.PI/180;
-    const Δλ = (lon2-lon1) * Math.PI/180;
-
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ/2) * Math.sin(Δλ/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-    return R * c; // in metres
-}
-
-// Function to calculate a new coordinate a certain distance away
-function calculateNewCoord(lat: number, lon: number, distance: number, bearing: number) {
-    const R = 6371e3; // Earth's radius in meters
-    const d = distance; 
-
-    const lat1 = lat * Math.PI/180;
-    const lon1 = lon * Math.PI/180;
-    const brng = bearing * Math.PI/180;
-
-    let lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R) +
-                          Math.cos(lat1)*Math.sin(d/R)*Math.cos(brng) );
-    let lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(d/R)*Math.cos(lat1),
-                                 Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2));
-
-    lat2 = lat2 * 180/Math.PI;
-    lon2 = lon2 * 180/Math.PI;
-
-    return { lat: lat2, lng: lon2 };
-}
+import { ArrowLeft } from 'lucide-react';
+import * as THREE from "three";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 function ARPageComponent() {
-    const router = useRouter();
-    const { toast } = useToast();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-    const [userPosition, setUserPosition] = useState<{ lat: number; lng: number } | null>(null);
-    const [distance, setDistance] = useState<number | null>(null);
-    const [taskCompleted, setTaskCompleted] = useState(false);
-    
-    const [target, setTarget] = useState<{lat: number, lng: number} | null>(null);
-    
-    const completionThreshold = 2; // meters
-    const coinVisibilityThreshold = 5; // meters
-    const testTargetDistance = 3; // meters
+  useEffect(() => {
+    if (typeof window === 'undefined' || !containerRef.current) {
+        return;
+    }
 
-    // Request Camera and Geolocation permissions
-    useEffect(() => {
-        const requestPermissions = async () => {
-            try {
-                // Camera
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                }
-                
-                // Geolocation
-                if (!navigator.geolocation) {
-                    throw new Error("Geolocation is not supported by your browser.");
-                }
+    const currentContainer = containerRef.current;
 
-                setHasPermission(true);
+    // --- Инициализация камеры ---
+    const video = document.createElement("video");
+    video.setAttribute("autoplay", "");
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    let videoReady = false;
 
-            } catch (error) {
-                console.error("Permission error:", error);
-                setHasPermission(false);
-                const errorMessage = (error as Error).message;
-                toast({
-                    variant: 'destructive',
-                    title: 'Permission Denied',
-                    description: errorMessage || 'Please enable camera and location permissions in your browser settings.',
-                });
-            }
-        };
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(stream => { 
+          video.srcObject = stream;
+          video.play(); // Start playing the video once the stream is ready
+          videoReady = true;
+       })
+      .catch(err => {
+        console.error("Camera access error:", err);
+        toast({
+            variant: "destructive",
+            title: "Camera Error",
+            description: "Could not access the camera. Please grant permission and ensure it's not in use by another app.",
+        });
+      });
 
-        requestPermissions();
+    // --- Инициализация сцены Three.js ---
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 100);
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    currentContainer.appendChild(renderer.domElement);
 
-        return () => {
-             if (videoRef.current && videoRef.current.srcObject) {
-                (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
-            }
+    // Фон – поток с камеры
+    const texture = new THREE.VideoTexture(video);
+    scene.background = texture;
+
+    // Монета (примитив)
+    const geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.05, 32);
+    const material = new THREE.MeshStandardMaterial({ color: 0xffd700 });
+    const coin = new THREE.Mesh(geometry, material);
+    scene.add(coin);
+
+    // Свет
+    const light = new THREE.DirectionalLight(0xffffff, 3);
+    light.position.set(0,1,1).normalize();
+    scene.add(light);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(ambientLight);
+
+    // --- Определяем геопозицию и азимут ---
+    let heading = 0;
+
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+        // webkitCompassHeading is for iOS
+        const compassHeading = (e as any).webkitCompassHeading; 
+        if (compassHeading != null) {
+            heading = 360 - compassHeading; // Invert for correct direction
+        } else if (e.alpha != null) {
+            // e.alpha is the fallback for other devices
+            heading = e.alpha; 
         }
-    }, [toast]);
-
-    // Watch user's position
-    useEffect(() => {
-        if (hasPermission) {
-            const watcher = navigator.geolocation.watchPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    const newUserPosition = { lat: latitude, lng: longitude };
-                    setUserPosition(newUserPosition);
-
-                    // For testing: create a dynamic target north of the user's starting position
-                    if (!target) {
-                        const testTarget = calculateNewCoord(latitude, longitude, testTargetDistance, 0); 
-                        setTarget(testTarget);
-                    }
-                },
-                (error) => {
-                    console.error("Geolocation error:", error);
-                    toast({
-                        variant: 'destructive',
-                        title: 'Geolocation Error',
-                        description: 'Could not get your location. Please ensure location services are enabled and you have a clear sky view.',
+    };
+    
+    // Check for iOS > 13
+    if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+        (DeviceOrientationEvent as any).requestPermission()
+            .then((permissionState: string) => {
+                if (permissionState === 'granted') {
+                    window.addEventListener("deviceorientation", handleOrientation);
+                } else {
+                     toast({
+                        variant: "destructive",
+                        title: "Permission Denied",
+                        description: "Device orientation access is needed for AR.",
                     });
-                },
-                { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
-            );
+                }
+            })
+            .catch(console.error);
+    } else {
+        // For other devices
+        window.addEventListener("deviceorientationabsolute", handleOrientation);
+    }
 
-            return () => navigator.geolocation.clearWatch(watcher);
+
+    navigator.geolocation.getCurrentPosition(pos => {
+      console.log("User coordinates:", pos.coords.latitude, pos.coords.longitude);
+      // coordinates can be used for quest logic
+    });
+
+    // --- Рендер ---
+    let animationFrameId: number;
+    function animate() {
+      animationFrameId = requestAnimationFrame(animate);
+
+      if(videoReady) {
+        texture.needsUpdate = true;
+      }
+      
+      coin.rotation.y += 0.01; // Make it spin
+
+      // Simple logic: place the coin 3m ahead
+      const rad = THREE.MathUtils.degToRad(heading);
+      coin.position.set(
+        3 * Math.sin(rad),
+        0, // centered vertically
+        -3 * Math.cos(rad)
+      );
+      
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    const handleResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+
+
+    return () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener("deviceorientationabsolute", handleOrientation);
+        window.removeEventListener("deviceorientation", handleOrientation);
+        if (video.srcObject) {
+            (video.srcObject as MediaStream).getTracks().forEach(track => track.stop());
         }
-    }, [hasPermission, toast, target]);
-
-    // Calculate distance and check for completion
-    useEffect(() => {
-        if (userPosition && target && !taskCompleted) {
-            const dist = getDistance(userPosition.lat, userPosition.lng, target.lat, target.lng);
-            setDistance(dist);
-
-            if (dist < completionThreshold) {
-                setTaskCompleted(true);
-                toast({
-                    title: 'Task Completed!',
-                    description: 'You have collected the coin!',
-                });
-                setTimeout(() => router.push('/quest'), 3000);
-            }
+        renderer.dispose();
+        if (currentContainer) {
+            currentContainer.removeChild(renderer.domElement);
         }
-    }, [userPosition, target, router, toast, taskCompleted]);
+    };
+  }, [toast]);
 
-
-    return (
-        <div className="flex flex-col h-screen bg-black text-white">
-            {/* Camera View */}
-            <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover" autoPlay playsInline muted />
-            
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/20" />
-
-            <main className="relative z-10 flex-1 flex flex-col items-center justify-between p-8">
-                {/* Top: Distance Indicator */}
-                <Card className="bg-black/50 backdrop-blur-sm">
-                    <CardContent className="p-4 flex items-center gap-4">
-                        <Compass className="h-8 w-8 text-primary" />
-                        <div>
-                             <p className="text-sm text-muted-foreground">Distance to Target</p>
-                            {distance !== null ? (
-                                <p className="text-2xl font-bold">{distance.toFixed(1)} meters</p>
-                            ) : (
-                                <p className="text-lg">Calculating...</p>
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                 {/* Center: Coin */}
-                <div className="flex items-center justify-center">
-                    {distance !== null && distance <= coinVisibilityThreshold && !taskCompleted && (
-                         <div className="coin-2d"></div>
-                    )}
-                </div>
-                
-                {/* Bottom: Spacer */}
-                 <div></div>
-
-            </main>
-
-            <footer className="absolute bottom-0 left-0 z-30 flex h-20 w-full items-center justify-center gap-4 px-4">
-                <Button asChild variant="secondary" size="icon" className="h-12 w-12 rounded-full">
-                    <Link href="/quest">
-                        <ArrowLeft className="h-6 w-6" />
-                        <span className="sr-only">Back to Quests</span>
-                    </Link>
-                </Button>
-            </footer>
-
-            {hasPermission === false && (
-                <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 p-8 text-center">
-                    <Alert variant="destructive" className="max-w-sm">
-                        <VideoOff className="h-4 w-4" />
-                        <AlertTitle>Permissions Required</AlertTitle>
-                        <AlertDescription>
-                            Please grant camera and location access in your browser settings to use the AR quest. You may need to refresh the page after granting permissions.
-                        </AlertDescription>
-                    </Alert>
-                </div>
-            )}
-        </div>
-    );
+  return (
+    <div className="relative h-screen w-screen bg-black">
+      <div ref={containerRef} className="absolute inset-0" />
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
+         <Button asChild variant="secondary" size="icon" className="h-12 w-12 rounded-full">
+            <Link href="/quest">
+                <ArrowLeft className="h-6 w-6" />
+                <span className="sr-only">Back to Quests</span>
+            </Link>
+        </Button>
+      </div>
+    </div>
+  );
 }
-
 
 export default function ARPage() {
     return (
