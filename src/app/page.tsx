@@ -71,7 +71,7 @@ export default function Home() {
 
           {/* Mobile Bottom Navigation */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-t-lg z-50">
-                <TabsList className="grid w-full grid-cols-5 h-auto">
+                <TabsList className="grid w-full grid-cols-4 h-auto">
                     <TabsTrigger value="plan" className="py-2.5 flex-col h-auto gap-1">
                         <Sparkles className="h-5 w-5" />
                         <span className="text-xs">Спланировать</span>
@@ -88,12 +88,6 @@ export default function Home() {
                         <Link href="/quest">
                             <QrCode className="h-5 w-5" />
                             <span className="text-xs">Квесты</span>
-                        </Link>
-                    </Button>
-                     <Button variant="ghost" className="flex-col h-auto gap-1 text-muted-foreground py-2.5" asChild>
-                        <Link href="/scan">
-                            <Camera className="h-5 w-5" />
-                            <span className="text-xs">Scan QR</span>
                         </Link>
                     </Button>
                 </TabsList>

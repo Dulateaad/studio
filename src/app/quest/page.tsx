@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Camera, QrCode } from "lucide-react";
+import { ArrowLeft, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getQuests, Quest } from "@/ai/flows/get-quests";
@@ -47,15 +47,8 @@ export default function QuestPage() {
                                 <Camera className="w-6 h-6" />
                                 Start a Quest
                             </CardTitle>
-                            <CardDescription className="text-primary-foreground/80">Scan a QR code at a location to begin an AR experience or select a task from the available quests below.</CardDescription>
+                            <CardDescription className="text-primary-foreground/80">Select a task from the available quests below to begin an AR experience.</CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <Button asChild className="w-full" variant="secondary">
-                                <Link href="/scan">
-                                    <QrCode className="mr-2" /> Scan QR Code
-                                </Link>
-                            </Button>
-                        </CardContent>
                     </Card>
 
                     <h2 className="text-2xl font-bold">Available Quests</h2>
