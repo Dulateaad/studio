@@ -105,7 +105,8 @@ function ARPageComponent() {
             const watcher = navigator.geolocation.watchPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
-                    setUserPosition({ lat: latitude, lng: longitude });
+                    const newUserPosition = { lat: latitude, lng: longitude };
+                    setUserPosition(newUserPosition);
 
                     // For testing: create a dynamic target north of the user's starting position
                     if (!target) {
@@ -118,10 +119,10 @@ function ARPageComponent() {
                     toast({
                         variant: 'destructive',
                         title: 'Geolocation Error',
-                        description: 'Could not get your location.',
+                        description: 'Could not get your location. Please ensure location services are enabled and you have a clear sky view.',
                     });
                 },
-                { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+                { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
             );
 
             return () => navigator.geolocation.clearWatch(watcher);
