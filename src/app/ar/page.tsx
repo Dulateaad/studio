@@ -45,8 +45,8 @@ function ARPageComponent() {
         videoEl.setAttribute("muted", "");
         videoEl.setAttribute("playsinline", "");
         videoEl.srcObject = stream;
-        await videoEl.play();
         videoRef.current = videoEl;
+        await videoEl.play();
 
         setIsStarted(true);
 
@@ -100,7 +100,7 @@ function ARPageComponent() {
             heading = e.alpha;
         }
     };
-    window.addEventListener("deviceorientation", handleOrientation, true);
+    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
 
 
     function animate() {
@@ -131,7 +131,7 @@ function ARPageComponent() {
             cancelAnimationFrame(animationFrameIdRef.current);
         }
         window.removeEventListener('resize', handleResize);
-        window.removeEventListener("deviceorientation", handleOrientation);
+        window.removeEventListener("deviceorientationabsolute", handleOrientation);
         
         if (video.srcObject) {
             (video.srcObject as MediaStream).getTracks().forEach(track => track.stop());
