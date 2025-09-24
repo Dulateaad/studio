@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Map, Pin, Route as RouteIcon, Sparkles, QrCode, Camera } from "lucide-react"
+import { Map, Pin, Route as RouteIcon, Sparkles, Camera } from "lucide-react"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plan } from "@/components/plan"
@@ -56,7 +56,7 @@ export default function Home() {
             <TabsTrigger value="plan"><Sparkles className="mr-2 h-4 w-4" />Спланировать</TabsTrigger>
             <TabsTrigger value="route"><RouteIcon className="mr-2 h-4 w-4" />План</TabsTrigger>
             <TabsTrigger value="nearby"><Map className="mr-2 h-4 w-4" />Рядом</TabsTrigger>
-            <TabsTrigger value="quest" asChild><Link href="/quest"><QrCode className="mr-2 h-4 w-4" />Квесты</Link></TabsTrigger>
+            <TabsTrigger value="quest" asChild><Link href="/quest"><Camera className="mr-2 h-4 w-4" />Квесты</Link></TabsTrigger>
           </TabsList>
 
           <TabsContent value="plan" className="mt-6">
@@ -86,7 +86,7 @@ export default function Home() {
                     </TabsTrigger>
                      <Button variant="ghost" className="flex-col h-auto gap-1 text-muted-foreground py-2.5" asChild>
                         <Link href="/quest">
-                            <QrCode className="h-5 w-5" />
+                            <Camera className="h-5 w-5" />
                             <span className="text-xs">Квесты</span>
                         </Link>
                     </Button>
