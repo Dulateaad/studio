@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Map, Pin, Route as RouteIcon, Sparkles, QrCode } from "lucide-react"
+import { Map, Pin, Route as RouteIcon, Sparkles, QrCode, Camera } from "lucide-react"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plan } from "@/components/plan"
@@ -91,9 +91,9 @@ export default function Home() {
                         </Link>
                     </Button>
                      <Button variant="ghost" className="flex-col h-auto gap-1 text-muted-foreground py-2.5" asChild>
-                        <Link href="/guide">
-                            <Pin className="h-5 w-5" />
-                            <span className="text-xs">Гид</span>
+                        <Link href="/scan">
+                            <Camera className="h-5 w-5" />
+                            <span className="text-xs">Scan QR</span>
                         </Link>
                     </Button>
                 </TabsList>

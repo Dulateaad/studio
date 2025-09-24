@@ -41,16 +41,16 @@ export default function QuestPage() {
             </header>
             <main className="flex-1 overflow-y-auto p-4 md:p-6">
                 <div className="mx-auto max-w-2xl space-y-6">
-                    <Card>
+                    <Card className="bg-primary text-primary-foreground">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <Camera className="w-6 h-6 text-primary" />
+                                <Camera className="w-6 h-6" />
                                 Start a Quest
                             </CardTitle>
-                            <CardDescription>Select a task from the available quests below to begin an AR experience or scan a QR code at a location.</CardDescription>
+                            <CardDescription className="text-primary-foreground/80">Scan a QR code at a location to begin an AR experience or select a task from the available quests below.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button asChild className="w-full">
+                            <Button asChild className="w-full" variant="secondary">
                                 <Link href="/scan">
                                     <QrCode className="mr-2" /> Scan QR Code
                                 </Link>
