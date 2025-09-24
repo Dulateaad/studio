@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Map, Pin, Route as RouteIcon, Sparkles, Camera } from "lucide-react"
+import { Map, Pin, Route as RouteIcon, Sparkles, Camera, QrCode } from "lucide-react"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plan } from "@/components/plan"
@@ -52,11 +52,12 @@ export default function Home() {
 
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="hidden md:grid w-full grid-cols-4 h-12">
+          <TabsList className="hidden md:grid w-full grid-cols-5 h-12">
             <TabsTrigger value="plan"><Sparkles className="mr-2 h-4 w-4" />Спланировать</TabsTrigger>
             <TabsTrigger value="route"><RouteIcon className="mr-2 h-4 w-4" />План</TabsTrigger>
             <TabsTrigger value="nearby"><Map className="mr-2 h-4 w-4" />Рядом</TabsTrigger>
             <TabsTrigger value="quest" asChild><Link href="/quest"><Camera className="mr-2 h-4 w-4" />Квесты</Link></TabsTrigger>
+            <TabsTrigger value="scan" asChild><Link href="/scan"><QrCode className="mr-2 h-4 w-4" />Скан</Link></TabsTrigger>
           </TabsList>
 
           <TabsContent value="plan" className="mt-6">
@@ -71,7 +72,7 @@ export default function Home() {
 
           {/* Mobile Bottom Navigation */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-t-lg z-50">
-                <TabsList className="grid w-full grid-cols-4 h-auto">
+                <TabsList className="grid w-full grid-cols-5 h-auto">
                     <TabsTrigger value="plan" className="py-2.5 flex-col h-auto gap-1">
                         <Sparkles className="h-5 w-5" />
                         <span className="text-xs">Спланировать</span>
@@ -88,6 +89,12 @@ export default function Home() {
                         <Link href="/quest">
                             <Camera className="h-5 w-5" />
                             <span className="text-xs">Квесты</span>
+                        </Link>
+                    </Button>
+                     <Button variant="ghost" className="flex-col h-auto gap-1 text-muted-foreground py-2.5" asChild>
+                        <Link href="/ar">
+                            <Camera className="h-5 w-5" />
+                            <span className="text-xs">AR</span>
                         </Link>
                     </Button>
                 </TabsList>
