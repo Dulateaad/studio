@@ -108,21 +108,20 @@ export function Map({ isLoaded, routeCoordinates, origin, destination, nearbyPla
     }
   };
 
+  const handleCenterChanged = () => {
+    if (mapRef.current && onCenterChanged) {
+        const newCenter = mapRef.current.getCenter();
+        if (newCenter) {
+            onCenterChanged({ lat: newCenter.lat(), lng: newCenter.lng() });
+        }
+    }
+  };
 
   if (!isLoaded) {
     return <Skeleton className="w-full h-full" />;
   }
 
   const polylinePath = routeCoordinates?.map(loc => loc.coordinates);
-
-  const handleDragEnd = () => {
-    if (mapRef.current) {
-        const newCenter = mapRef.current.getCenter();
-        if (newCenter) {
-            onCenterChanged?.({ lat: newCenter.lat(), lng: newCenter.lng() });
-        }
-    }
-  };
 
   return (
     <div className="w-full h-full relative">
@@ -136,8 +135,8 @@ export function Map({ isLoaded, routeCoordinates, origin, destination, nearbyPla
             streetViewControl: false,
             fullscreenControl: false,
         }}
-        onDragEnd={handleDragEnd}
-        onZoomChanged={handleDragEnd} // Also update on zoom
+        onDragEnd={handleCenterChanged}
+        onZoomChanged={handleCenterChanged}
         >
         {directions && <DirectionsRenderer directions={directions} />}
 

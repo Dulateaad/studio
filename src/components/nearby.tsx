@@ -76,7 +76,7 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
   const handleSearchNearby = async (placeType: string) => {
     setIsSearching(true);
     setActiveCategory(placeType);
-    setCalculatedRoute(null);
+    setCalculatedRoute(null); // Clear route when searching nearby
     try {
         const places = await findNearbyPlaces({
             latitude: mapCenter.lat,
@@ -111,6 +111,7 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
   }
 
   useEffect(() => {
+    if (!isLoaded) return;
     const options = {
         bounds: astanaBounds,
         strictBounds: true,
@@ -122,7 +123,7 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
     if (destinationAutocomplete) {
         destinationAutocomplete.setOptions(options);
     }
-  }, [originAutocomplete, destinationAutocomplete]);
+  }, [isLoaded, originAutocomplete, destinationAutocomplete]);
 
   const clearNearbySearch = () => {
     setNearbyPlaces([]);
@@ -136,23 +137,21 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
             <CardHeader>
                 <CardTitle>Построить маршрут</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent>
                 <div className="space-y-4">
-                    <div className="flex flex-col gap-4">
-                        {isLoaded && (
-                            <>
-                            <Autocomplete onLoad={onOriginLoad}>
-                                <Input type="text" placeholder="Начальный адрес" ref={originRef} className="w-full" />
-                            </Autocomplete>
-                            <Autocomplete onLoad={onDestinationLoad}>
-                                <Input type="text" placeholder="Конечный адрес" ref={destinationRef} className="w-full" />
-                            </Autocomplete>
-                            </>
-                        )}
-                    </div>
+                    {isLoaded ? (
+                        <>
+                        <Autocomplete onLoad={onOriginLoad}>
+                            <Input type="text" placeholder="Начальный адрес" ref={originRef} className="w-full" />
+                        </Autocomplete>
+                        <Autocomplete onLoad={onDestinationLoad}>
+                            <Input type="text" placeholder="Конечный адрес" ref={destinationRef} className="w-full" />
+                        </Autocomplete>
+                        </>
+                    ) : <Skeleton className="h-24 w-full" />}
                      <div className="flex gap-2">
-                          <Button onClick={handleCalculateRoute} className="w-full">Проложить маршрут</Button>
-                          <Button variant="outline" size="icon" onClick={handleClearRoute} disabled={!calculatedRoute}>
+                          <Button onClick={handleCalculateRoute} className="w-full" disabled={!isLoaded}>Проложить маршрут</Button>
+                          <Button variant="outline" size="icon" onClick={handleClearRoute} disabled={!calculatedRoute || !isLoaded}>
                               <X className="h-4 w-4" />
                           </Button>
                      </div>
@@ -172,7 +171,7 @@ export function Nearby({ routeCoordinates }: NearbyProps) {
                                 key={cat.type}
                                 variant={activeCategory === cat.type ? "default" : "outline"}
                                 onClick={() => handleSearchNearby(cat.type)}
-                                disabled={isSearching}
+                                disabled={isSearching || !isLoaded}
                                 className="flex-col h-16"
                             >
                                 <cat.icon className="h-5 w-5 mb-1" />
